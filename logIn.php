@@ -26,43 +26,43 @@ if (!empty($_POST) && $_SERVER["REQUEST_METHOD"] == "POST")
     </style>
 </head>
 <body>
-    <header class="bg-gray-900 pattern h-screen">
+    <header class="bg-black pattern h-screen">
         <div class="container px-6 mx-auto">
             <nav class="flex flex-col py-6 sm:flex-row sm:justify-between sm:items-center">
                 <img class="w-auto h-12" src="./assets/images/icon.png" alt="">
 
                 <div class="flex items-center mt-2 -mx-2 sm:mt-0">
-                    <a href="" class="px-3 py-1 text-sm font-semibold text-white transition-colors duration-300 transform border-2 rounded-md hover:bg-gray-700">Log In</a>
-                    <a href="/Instagram_Clone/signUp.php" class="px-3 py-2 mx-2 text-sm font-semibold text-white transition-colors duration-300 transform bg-black rounded-md hover:bg-gray-800">Sign Up</a>
+                    <a href="" class="px-3 py-1 text-sm font-semibold text-white transition-colors duration-300 transform border-2 rounded-md hover:bg-neutral-700">Log In</a>
+                    <a href="/Instagram_Clone/signUp.php" class="px-3 py-2 mx-2 text-sm font-semibold text-white transition-colors duration-300 transform bg-black rounded-md hover:bg-neutral-800">Sign Up</a>
                 </div>
             </nav>
 
             <div class="flex flex-col items-center py-6 lg:h-[36rem] lg:flex-row">
                 <div class="lg:w-1/2">
-                    <h2 class="text-3xl font-semibold text-gray-100 lg:text-4xl">Instagram</h2>
+                    <h2 class="text-3xl font-semibold text-neutral-100 lg:text-4xl">Instagram</h2>
 
-                    <h3 class="mt-2 text-2xl font-semibold text-gray-100">
-                        Hello <span class="text-blue-400">Guest</span>
+                    <h3 class="mt-2 text-2xl font-semibold text-neutral-100">
+                        Hello <span class="text-neutral-400">Guest</span>
                     </h3>
                 </div>
 
                 <div class="flex mt-8 lg:w-1/2 lg:justify-end lg:mt-0">
-                    <div class="w-full max-w-md bg-white rounded-lg dark:bg-gray-800">
+                    <div class="w-full max-w-md bg-white rounded-lg dark:bg-black">
                         <div class="px-6 py-8 text-center">
-                            <h2 class="text-2xl font-semibold text-gray-700 dark:text-white">Log In</h2>
+                            <h2 class="text-2xl font-semibold text-neutral-700 dark:text-white">Log In</h2>
 
                             <form method="post">
                                 <?php if (!empty($_SESSION["error"])): ?>
                                     <h2 class="text-base font-medium text-red-600 mb-6"><?= $_SESSION["error"] ?></h2>
                                 <?php endif; ?>
                                 <div class="mt-4">
-                                    <input name="email" required value="<?= $_POST["email"] ?? "" ?>" class="block w-full px-4 py-2 text-white placeholder-gray-400 bg-white border rounded-md dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-500 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:ring-blue-300 focus:outline-none focus:ring" type="email" placeholder="Email address" aria-label="Email address">
-                                    <input name="password" required value="" class="block w-full px-4 py-2 mt-4 text-white placeholder-gray-400 bg-white border rounded-md dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-500 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:ring-blue-300 focus:outline-none focus:ring" type="password" placeholder="Password" aria-label="Password">
+                                    <input name="email" required value="<?= $_POST["email"] ?? "" ?>" class="block w-full px-4 py-2 text-white placeholder-neutral-400 bg-white border rounded-md dark:bg-neutral-800 dark:border-neutral-600 dark:placeholder-neutral-500 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:ring-blue-300 focus:outline-none focus:ring" type="email" placeholder="Email address" aria-label="Email address">
+                                    <input name="password" required value="" class="block w-full px-4 py-2 mt-4 text-white placeholder-neutral-400 bg-white border rounded-md dark:bg-neutral-800 dark:border-neutral-600 dark:placeholder-neutral-500 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:ring-blue-300 focus:outline-none focus:ring" type="password" placeholder="Password" aria-label="Password">
                                 </div>
 
                                 <div class="flex items-center justify-between mt-4">
 
-                                    <button type="submit" class="px-6 py-2 font-medium text-white transition-colors duration-300 transform bg-gray-900 rounded-md hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-800 dark:focus:bg-gray-700">Log In</button>
+                                    <button type="submit" class="px-6 py-2 font-medium text-white transition-colors duration-300 transform bg-neutral-900 rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-700 focus:outline-none focus:bg-neutral-800 dark:focus:bg-neutral-700">Log In</button>
                                 </div>
                             </form>
                         </div>

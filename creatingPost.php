@@ -1,6 +1,7 @@
 <?php
 
-require __DIR__ . "/src/helpers.php";
+require_once  __DIR__ . "/src/helpers.php";
+require_once  __DIR__ . "/src/controllers/PostController.php";
 
 session_start();
 
@@ -10,6 +11,10 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
 }
 
 $user = GetCurrentUser();
+
+$_SESSION["error"] = "";
+if (!empty($_POST)) 
+    (new PostController)->insertNewPost($_POST, $_FILES);
 
 ?>
 
@@ -25,7 +30,7 @@ $user = GetCurrentUser();
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
-<body class="bg-black">
+<body class="bg-black text-white">
     <nav class="fixed left-0 top-0 h-screen w-[72px] lg:w-[250px] bg-black border-r border-neutral-800 flex flex-col justify-between text-white transition-all">
         <div class="flex flex-col">
             <div class="px-4 pt-5">
@@ -79,7 +84,7 @@ $user = GetCurrentUser();
                     </a>
                 </li>
                 <li>
-                    <a href="/Instagram_Clone/accounts.php/" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
+                    <a href="/Instagram_Clone/accounts.php/<?= $user["url"] ?>" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
                         <img src="<?= $user["profile_image"] ?>" alt="User" class="w-9 h-9 rounded-full">
                         <div class="hidden lg:block">
                             <p class="text-sm font-semibold text-white"><?= $user["username"] ?></p>
@@ -89,6 +94,42 @@ $user = GetCurrentUser();
             </ul>
         </div>
     </nav>
+
+    <div class="ml-70">
+        <form method="post" class="" enctype="multipart/form-data">
+            <?php if (!empty($_SESSION["error"])): ?>
+                <h2 class="text-base font-medium text-red-600 mb-6"><?= $_SESSION["error"] ?></h2>
+            <?php endif; ?>
+
+            <div class="mt-4">
+                <div>
+                    <label for="file" class="block text-center text-lg font-semibold text-gray-300">File</label>
+
+                    <label for="dropzone-file" class="flex flex-col items-center w-full max-w-lg p-5 mx-auto mt-2 text-center bg-white border-2 border-gray-300 border-dashed cursor-pointer dark:bg-gray-900 dark:border-gray-700 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-gray-500 dark:text-gray-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                        </svg>
+
+                        <h2 class="mt-1 font-medium tracking-wide text-gray-700 dark:text-gray-200">Photo File</h2>
+
+                        <p class="mt-2 text-xs tracking-wide text-gray-500 dark:text-gray-400">Upload or darg & drop your file SVG, PNG or JPG. </p>
+
+                        <input name="file" id="dropzone-file" type="file" class="hidden" />
+                    </label>
+                </div>
+
+                <div>
+                    <label for="Description" class="block text-lg font-semibold text-white">Caption</label>
+
+                    <textarea name="content" placeholder="Caption..." class="block mt-2 w-[70%] placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-4 h-32 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"></textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-4">
+                <button type="submit" class="px-6 py-2 font-medium text-white transition-colors duration-300 transform bg-gray-900 rounded-md hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-800 dark:focus:bg-gray-700">Post</button>
+            </div>
+        </form>
+    </div>
 
 </body>
 

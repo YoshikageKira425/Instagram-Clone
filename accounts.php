@@ -9,6 +9,8 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
+$urlUser = GetUserUrl(GetTheUrlValue());
+
 $user = GetCurrentUser();
 
 ?>
@@ -79,7 +81,7 @@ $user = GetCurrentUser();
                     </a>
                 </li>
                 <li>
-                    <a href="/Instagram_Clone/accounts.php/" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
+                    <a href="/Instagram_Clone/accounts.php/<?= $user["url"] ?>" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
                         <img src="<?= $user["profile_image"] ?>" alt="User" class="w-9 h-9 rounded-full">
                         <div class="hidden lg:block">
                             <p class="text-sm font-semibold text-white"><?= $user["username"] ?></p>

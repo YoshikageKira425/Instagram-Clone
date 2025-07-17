@@ -1,7 +1,7 @@
 <?php
 
 require 'vendor/autoload.php';
-require __DIR__ . "/../helpers.php";
+require_once  __DIR__ . "/../helpers.php";
 
 use Medoo\Medoo;
 
@@ -25,6 +25,7 @@ class User
     {
         $data["profile_image"] = "/Instagram_Clone/assets/images/defaultPic.png";
         $data["join_at"] = date("Y-m-d");
+        $data["url"] = preg_replace('/\s+/', '', strtolower(htmlspecialchars($data["username"])));
 
         $this->db->insert($this->table, $data);
         return $this->db->id();
@@ -33,6 +34,7 @@ class User
     public function updatedUser($id, $data, $file) 
     {
         $data["profile_image"] = SaveTheImage($file);
+        $data["url"] = preg_replace('/\s+/', '', strtolower(htmlspecialchars($data["username"])));
 
         return $this->db->update($this->table, $data, ['id' => $id])->rowCount();
     }

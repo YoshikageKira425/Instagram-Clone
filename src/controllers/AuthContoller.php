@@ -69,7 +69,7 @@ class AuthController
 
         $data["password"] = $passwordHash;
         $data["email"] = filter_var(trim($data["email"]), FILTER_SANITIZE_EMAIL);
-        $data["username"] = htmlspecialchars(trim($data["username"]));
+        $data["username"] = htmlspecialchars($data["username"]);
 
         $_SESSION["id"] = $this->userModel->insertUser($data);
         header("Location: index.php");
