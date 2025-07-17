@@ -1,4 +1,13 @@
 <?php
+
+session_start();
+
+require __DIR__ . "/src/controllers/AuthContoller.php";
+
+$_SESSION["error"] = "";
+if (!empty($_POST) && $_SERVER["REQUEST_METHOD"] == "POST")
+    (new AuthController)->logIn($_POST);
+
 ?>
 
 <!DOCTYPE html>
@@ -52,7 +61,6 @@
                                 </div>
 
                                 <div class="flex items-center justify-between mt-4">
-                                    <button type="button" class="text-sm text-gray-600 dark:text-gray-200 hover:underline">Forget Password?</button>
 
                                     <button type="submit" class="px-6 py-2 font-medium text-white transition-colors duration-300 transform bg-gray-900 rounded-md hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-800 dark:focus:bg-gray-700">Log In</button>
                                 </div>

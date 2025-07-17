@@ -1,4 +1,13 @@
 <?php
+
+session_start();
+
+if (empty($_SESSION) || empty($_SESSION["id"]))
+{
+    header("Location: signUp.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>

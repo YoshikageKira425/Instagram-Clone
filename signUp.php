@@ -1,4 +1,13 @@
 <?php
+
+session_start();
+
+require __DIR__ . "/src/controllers/AuthContoller.php";
+
+$_SESSION["error"] = "";
+if (!empty($_POST) && $_SERVER["REQUEST_METHOD"] == "POST")
+    (new AuthController)->signUp($_POST);
+
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +29,7 @@
     <header class="bg-gray-900 pattern h-screen">
         <div class="container px-6 mx-auto">
             <nav class="flex flex-col py-6 sm:flex-row sm:justify-between sm:items-center">
-                <img class="w-auto h-6 sm:h-7" src="https://merakiui.com/images/logo.svg" alt="">
+                <img class="w-auto h-12" src="./assets/images/icon.png" alt="">
 
                 <div class="flex items-center mt-2 -mx-2 sm:mt-0">
                     <a href="" class="px-3 py-1 text-sm font-semibold text-white transition-colors duration-300 transform border-2 rounded-md hover:bg-gray-700">Sign Up</a>
@@ -30,13 +39,11 @@
 
             <div class="flex flex-col items-center py-6 lg:h-[36rem] lg:flex-row">
                 <div class="lg:w-1/2">
-                    <h2 class="text-3xl font-semibold text-gray-100 lg:text-4xl">Brand</h2>
+                    <h2 class="text-3xl font-semibold text-gray-100 lg:text-4xl">Instagram</h2>
 
                     <h3 class="mt-2 text-2xl font-semibold text-gray-100">
                         Hello <span class="text-blue-400">Guest</span>
                     </h3>
-
-                    <p class="mt-4 text-gray-100">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsam, eum modi incidunt adipisci quod porro et non exercitationem quasi, maxime culpa ut nemo ab delectus saepe iste nostrum explicabo a?</p>
                 </div>
 
                 <div class="flex mt-8 lg:w-1/2 lg:justify-end lg:mt-0">
