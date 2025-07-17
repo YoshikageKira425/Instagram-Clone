@@ -1,6 +1,7 @@
 <?php
 
 require 'vendor/autoload.php';
+require __DIR__ . "/../helpers.php";
 
 use Medoo\Medoo;
 
@@ -27,6 +28,13 @@ class User
 
         $this->db->insert($this->table, $data);
         return $this->db->id();
+    }
+
+    public function updatedUser($id, $data, $file) 
+    {
+        $data["profile_image"] = SaveTheImage($file);
+
+        return $this->db->update($this->table, $data, ['id' => $id])->rowCount();
     }
 
     public function deleteUser($id)
