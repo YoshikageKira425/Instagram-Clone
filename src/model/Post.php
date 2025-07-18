@@ -53,8 +53,8 @@ class Post
     {
         return $this->db->delete('posts', ['id' => $id])->rowCount();
     }
-    public function getPost($id)
+    public function getPosts($userId)
     {
-        return $this->db->get('posts', '*', ['id' => $id]);
+        return $this->db->select('posts', '*', ['user_id' => $userId]);
     }
 }

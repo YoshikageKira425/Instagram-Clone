@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . "/src/helpers.php";
+require __DIR__ . "/src/controllers/PostController.php";
 
 session_start();
 
@@ -9,7 +10,10 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
+$postController = new PostController();
+
 $urlUser = GetUserUrl(GetTheUrlValue());
+$post = $postController->getPosts($urlUser["id"]);
 
 $user = GetCurrentUser();
 
@@ -82,7 +86,7 @@ $user = GetCurrentUser();
                 </li>
                 <li>
                     <a href="/Instagram_Clone/accounts.php/<?= $user["url"] ?>" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
-                        <img src="<?= $user["profile_image"] ?>" alt="User" class="w-9 h-9 rounded-full">
+                        <img src="<?= $user["profile_image"] ?>" alt="User" class="w-9 h-9 rounded-full border-white border-2">
                         <div class="hidden lg:block">
                             <p class="text-sm font-semibold text-white"><?= $user["username"] ?></p>
                         </div>
@@ -91,6 +95,77 @@ $user = GetCurrentUser();
             </ul>
         </div>
     </nav>
+
+    <div class="min-h-screen flex justify-center">
+        <div class="flex flex-col items-center space-y-6 mt-16">
+            <div class="flex flex-row items-center space-x-10">
+                <div>
+                    <img src="<?= $urlUser["profile_image"] ?>" alt="User" class="w-37 h-37 rounded-full">
+                </div>
+                <div class="flex flex-col space-y-4">
+                    <div class="flex space-x-7 items-center">
+                        <p class="text-xl px-4 py-2 text-center font-semibold text-white"><?= $urlUser["username"] ?></p>
+                        <?php if ($user["id"] == $urlUser["id"]): ?>
+                            <a class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Edit Profile</a>
+                        <?php else: ?>
+                            <a class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Following</a>
+                            <a href="/Instagram_Clone/messages.php" class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Message</a>
+                        <?php endif; ?>
+                    </div>
+                    <div class="flex space-x-14">
+                        <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= count($post) ?></b> posts</p>
+                        <p class="text-base font-semibold text-neutral-400"><b class="text-white">0</b> followers</p>
+                        <p class="text-base font-semibold text-neutral-400"><b class="text-white">0</b> following</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center space-x-10">
+                <hr class="border-t-2 border-white">
+
+                <div class="border-neutral-700 border-b-3">
+                    <div class="flex space-x-15">
+                        <a class="text-white px-2 py-2 rounded-lg bg-black hover:bg-neutral-800 transition border-white border-b-3">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="xfx01vb" style="--color: rgb(var(--ig-primary-icon));">
+                                <title>Posts</title>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M3 3H21V21H3z"></path>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M9.01486 3 9.01486 21"></path>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M14.98514 3 14.98514 21"></path>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M21 9.01486 3 9.01486"></path>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M21 14.98514 3 14.98514"></path>
+                            </svg>
+                        </a>
+
+                        <a class="text-white px-2 py-2 rounded-lg bg-black hover:bg-neutral-800 transition border-white border-b-3">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="--color: rgb(var(--ig-secondary-icon));">
+                                <title>Saved</title>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M20 21 12 13.44 4 21 4 3 20 3 20 21z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex flex-row items-center space-x-4">
+                    <?php if (!empty($post)): ?>
+                        <div class="grid grid-cols-3 gap-2 p-4">
+                            <?php foreach ($post as  $p): ?>
+                                <a href="/Instagram_Clone/post.php/<?= $p["id"] ?>" class="relative block w-[200px] h-[280px] overflow-hidden group">
+                                    <img src="<?= $p["image"] ?>" alt="Post 1" class="w-full h-full object-cover">
+
+                                    <div class="absolute inset-0 bg-[rgba(0,0,0,0.6)] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                                        <span class="text-white text-lg font-semibold">View Post</span>
+                                    </div>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <h1 class="text-white font-bold text-center text-2xl">No Posts Yet.</h1>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

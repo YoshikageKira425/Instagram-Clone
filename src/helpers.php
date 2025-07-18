@@ -45,7 +45,7 @@ function GetCurrentUser()
 function GetTheUrlValue()
 {
     $parts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-    return end($parts);
+    return $parts[2] ?? "";
 }
 
 function GetUserUrl($url)

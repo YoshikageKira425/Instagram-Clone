@@ -30,7 +30,6 @@ class User
         $this->db->insert($this->table, $data);
         return $this->db->id();
     }
-
     public function updatedUser($id, $data, $file) 
     {
         $data["profile_image"] = SaveTheImage($file);
@@ -38,19 +37,12 @@ class User
 
         return $this->db->update($this->table, $data, ['id' => $id])->rowCount();
     }
+    public function deleteUser($id) { return $this->db->delete($this->table, ['id' => $id])->rowCount(); }
 
-    public function deleteUser($id)
-    {
-        return $this->db->delete($this->table, ['id' => $id])->rowCount();
-    }
+    public function followSomeone($follow_by, $follow_to) { $this->db->insert("followers", ["followed_by" => $follow_by, "followed_to" => $follow_to]); }
+    public function isFollowedBy($follow_by) { $this->db->select("followers", "*", ["followed_by" => $follow_by]); }
+    public function isFollowedTo($follow_to) { $this->db->select("followers", "*", ["followed_to" => $follow_to]); }
 
-    public function findByEmail($email)
-    {
-        return $this->db->get($this->table, '*', ['email' => $email]);
-    }
-
-    public function findById($id)
-    {
-        return $this->db->get($this->table, '*', ['id' => $id]);
-    }
+    public function findByEmail($email) { return $this->db->get($this->table, '*', ['email' => $email]); }
+    public function findById($id) { return $this->db->get($this->table, '*', ['id' => $id]); }
 }

@@ -28,4 +28,9 @@ class PostController
 
         $this->postModel->insertPost($data, $file["file"]);
     }
+
+    public function getPosts($userId)
+    {
+        return $this->postModel->getPosts($userId);        
+    }
 }
