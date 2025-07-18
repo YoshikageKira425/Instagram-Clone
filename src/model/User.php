@@ -40,8 +40,16 @@ class User
     public function deleteUser($id) { return $this->db->delete($this->table, ['id' => $id])->rowCount(); }
 
     public function followSomeone($follow_by, $follow_to) { $this->db->insert("followers", ["followed_by" => $follow_by, "followed_to" => $follow_to]); }
-    public function isFollowedBy($follow_by) { $this->db->select("followers", "*", ["followed_by" => $follow_by]); }
-    public function isFollowedTo($follow_to) { $this->db->select("followers", "*", ["followed_to" => $follow_to]); }
+    public function unFollowSomeone($follow_by, $follow_to) { $this->db->delete("followers", ["followed_by" => $follow_by, "followed_to" => $follow_to]); }
+    public function getFollowedBy($follow_by) { return $this->db->select("followers", "*", ["followed_by" => $follow_by]) ?? []; }
+    public function getFollowedTo($follow_to) { return $this->db->select("followers", "*", ["followed_to" => $follow_to]) ?? []; }
+    public function isFollowedToSomeone($follow_by, $follow_to)
+    {
+        return $this->db->has("followers",  [
+            "followed_by" => $follow_by,
+            "followed_to" => $follow_to
+        ]);
+    }
 
     public function findByEmail($email) { return $this->db->get($this->table, '*', ['email' => $email]); }
     public function findById($id) { return $this->db->get($this->table, '*', ['id' => $id]); }

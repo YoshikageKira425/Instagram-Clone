@@ -2,6 +2,7 @@
 
 require __DIR__ . "/src/helpers.php";
 require __DIR__ . "/src/controllers/PostController.php";
+require __DIR__ . "/src/controllers/UserContoller.php";
 
 session_start();
 
@@ -11,11 +12,17 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
 }
 
 $postController = new PostController();
+$userController = new UserController();
 
 $urlUser = GetUserUrl(GetTheUrlValue());
 $post = $postController->getPosts($urlUser["id"]);
 
 $user = GetCurrentUser();
+
+$isFollowedToSomeone = $userController->isFollowedToSomeone($user["id"], $urlUser["id"]);
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
+    $userController->handleFollowAction($_POST["follow_action"], $user["id"], $urlUser["id"]);
 
 ?>
 
@@ -106,16 +113,26 @@ $user = GetCurrentUser();
                     <div class="flex space-x-7 items-center">
                         <p class="text-xl px-4 py-2 text-center font-semibold text-white"><?= $urlUser["username"] ?></p>
                         <?php if ($user["id"] == $urlUser["id"]): ?>
-                            <a class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Edit Profile</a>
+                            <a href="/Instagram_Clone/accountEdit.php" class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Edit Profile</a>
                         <?php else: ?>
-                            <a class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Following</a>
-                            <a href="/Instagram_Clone/messages.php" class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Message</a>
+                            <form class="px-4 py-4" method="post">
+                                <?php if ($isFollowedToSomeone == false): ?>
+                                    <button name="follow_action" value="followed" class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">
+                                        Follow
+                                    </button>
+                                <?php else: ?>
+                                    <button name="follow_action" value="unfollowed" class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">
+                                        Unfollow
+                                    </button>
+                                    <a href="/Instagram_Clone/messages.php" class="text-lg text-white px-4 py-2 rounded-lg bg-neutral-700 hover:bg-neutral-600 transition">Message</a>
+                                <?php endif; ?>
+                            </form>
                         <?php endif; ?>
                     </div>
                     <div class="flex space-x-14">
                         <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= count($post) ?></b> posts</p>
-                        <p class="text-base font-semibold text-neutral-400"><b class="text-white">0</b> followers</p>
-                        <p class="text-base font-semibold text-neutral-400"><b class="text-white">0</b> following</p>
+                        <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowerCount($urlUser["id"]) ?></b> followers</p>
+                        <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowingCount($urlUser["id"]) ?></b> following</p>
                     </div>
                 </div>
             </div>
@@ -123,26 +140,26 @@ $user = GetCurrentUser();
             <div class="flex flex-col items-center space-x-10">
                 <hr class="border-t-2 border-white">
 
-                <div class="border-neutral-700 border-b-3">
-                    <div class="flex space-x-15">
-                        <a class="text-white px-2 py-2 rounded-lg bg-black hover:bg-neutral-800 transition border-white border-b-3">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="xfx01vb" style="--color: rgb(var(--ig-primary-icon));">
-                                <title>Posts</title>
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M3 3H21V21H3z"></path>
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M9.01486 3 9.01486 21"></path>
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M14.98514 3 14.98514 21"></path>
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M21 9.01486 3 9.01486"></path>
-                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M21 14.98514 3 14.98514"></path>
-                            </svg>
-                        </a>
+                <div class="flex space-x-15">
+                    <a class="text-white px-2 py-2 rounded-lg bg-black hover:bg-neutral-800 transition border-white border-b-3">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="xfx01vb" style="--color: rgb(var(--ig-primary-icon));">
+                            <title>Posts</title>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M3 3H21V21H3z"></path>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M9.01486 3 9.01486 21"></path>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M14.98514 3 14.98514 21"></path>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M21 9.01486 3 9.01486"></path>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M21 14.98514 3 14.98514"></path>
+                        </svg>
+                    </a>
 
+                    <?php if ($user["id"] == $urlUser["id"]): ?>
                         <a class="text-white px-2 py-2 rounded-lg bg-black hover:bg-neutral-800 transition border-white border-b-3">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="--color: rgb(var(--ig-secondary-icon));">
                                 <title>Saved</title>
                                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2px" d="M20 21 12 13.44 4 21 4 3 20 3 20 21z"></path>
                             </svg>
                         </a>
-                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="flex flex-row items-center space-x-4">
