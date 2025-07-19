@@ -5,10 +5,9 @@ require_once  __DIR__ . "/../helpers.php";
 
 use Medoo\Medoo;
 
-class User
+final class User
 {
-    private $table = 'users';
-    private $db;
+    private Medoo $db;
 
     public function __construct()
     {
@@ -21,44 +20,45 @@ class User
         ]);
     }
 
-    public function insertUser($data)
+    public function insertUser(array $data): void
     {
         $data["profile_image"] = "/Instagram_Clone/assets/images/defaultPic.png";
         $data["join_at"] = date("Y-m-d");
         $data["url"] = preg_replace('/\s+/', '', strtolower(htmlspecialchars($data["username"])));
 
-        $this->db->insert($this->table, $data);
-        return $this->db->id();
+        $this->db->insert('users', $data);
     }
-    public function updatedUser($id, $data, $file)
+    public function updatedUser(int $id, array $data, array $file = []): void
     {
-        $data["profile_image"] = SaveTheImage($file);
+        if (!empty($file)) {
+            $data["profile_image"] = SaveTheImage($file);
+        }
         $data["url"] = preg_replace('/\s+/', '', strtolower(htmlspecialchars($data["username"])));
 
-        return $this->db->update($this->table, $data, ['id' => $id])->rowCount();
+        $this->db->update('users', $data, ['id' => $id])->rowCount();
     }
-    public function deleteUser($id)
+    public function deleteUser(int $id): int
     {
-        return $this->db->delete($this->table, ['id' => $id])->rowCount();
+        return $this->db->delete('users', ['id' => $id])->rowCount();
     }
 
-    public function followSomeone($follow_by, $follow_to)
+    public function followSomeone(int $follow_by, int $follow_to)
     {
         $this->db->insert("followers", ["followed_by" => $follow_by, "followed_to" => $follow_to]);
     }
-    public function unFollowSomeone($follow_by, $follow_to)
+    public function unFollowSomeone(int $follow_by, int $follow_to)
     {
         $this->db->delete("followers", ["followed_by" => $follow_by, "followed_to" => $follow_to]);
     }
-    public function getFollowedBy($follow_by)
+    public function getFollowedBy(int $follow_by): array
     {
         return $this->db->select("followers", "*", ["followed_by" => $follow_by]) ?? [];
     }
-    public function getFollowedTo($follow_to)
+    public function getFollowedTo(int $follow_to): array
     {
         return $this->db->select("followers", "*", ["followed_to" => $follow_to]) ?? [];
     }
-    public function isFollowedToSomeone($follow_by, $follow_to)
+    public function isFollowedToSomeone(int $follow_by, int $follow_to): bool
     {
         return $this->db->has("followers",  [
             "followed_by" => $follow_by,
@@ -66,12 +66,12 @@ class User
         ]);
     }
 
-    public function findByEmail($email)
+    public function findByEmail(string $email): array
     {
-        return $this->db->get($this->table, '*', ['email' => $email]);
+        return $this->db->get('users', '*', ['email' => $email]) ?? [];
     }
-    public function findById($id)
+    public function findById(int $id): array
     {
-        return $this->db->get($this->table, '*', ['id' => $id]);
+        return $this->db->get('users', '*', ['id' => $id]) ?? [];
     }
 }

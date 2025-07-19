@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . "/src/helpers.php";
+require __DIR__ . "/src/controllers/AuthController.php";
 
 session_start();
 
@@ -8,6 +9,9 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     header("Location: signUp.php");
     exit;
 }
+
+if (!empty($_POST) && !empty($_POST["logout"]))
+    (new AuthController)->logOut();
 
 $user = GetCurrentUser();
 
@@ -87,6 +91,10 @@ $user = GetCurrentUser();
                 </li>
             </ul>
         </div>
+
+        <form method="post">
+            <button name="logout" value="logout" class="font-bold p-2">Logout</button>
+        </form>
     </nav>
 
 

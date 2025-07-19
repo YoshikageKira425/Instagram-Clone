@@ -7,10 +7,10 @@ require_once __DIR__ . "/../model/Comment.php";
 
 class PostController
 {
-    private $postModel;
-    private $userModel;
-    private $likeSaveModel;
-    private $commentModel;
+    private Post $postModel;
+    private User $userModel;
+    private LikeSave $likeSaveModel;
+    private Comment $commentModel;
 
     public function __construct()
     {
@@ -20,7 +20,7 @@ class PostController
         $this->commentModel = new Comment();
     }
 
-    public function insertNewPost($data, $file)
+    public function insertNewPost(array $data, array $file): void
     {
         if (strlen($data["content"]) >= 255) {
             $_SESSION["error"] = "The caption length extended the limit.";
@@ -38,7 +38,7 @@ class PostController
         $this->postModel->insertPost($data, $file["file"]);
     }
 
-    public function updatePost($id, $data, $file)
+    public function updatePost(int $id, array $data, array $file): void
     {
         if (strlen($data["content"]) >= 255) {
             $_SESSION["error"] = "The caption length extended the limit.";
@@ -54,17 +54,17 @@ class PostController
         $this->postModel->updatePost($id, $data, $file["file"]);
     }
 
-    public function insertComment($user_id, $post_id, $content) 
+    public function insertComment(int $user_id, int $post_id, string $content): void
     {
         $this->commentModel->addComment($user_id, $post_id, $content);
     }
 
-    public function getComments($postId)
+    public function getComments(int $postId): array
     {
         return $this->commentModel->getComments($postId);
     }
 
-    public function handleLikeAndSave($postId, $action)
+    public function handleLikeAndSave(int $postId, string $action):void
     {
         if ($action === 'like')
             $this->likeSaveModel->likePost($_SESSION["id"], $postId);
@@ -76,13 +76,13 @@ class PostController
             $this->likeSaveModel->deleteSave($_SESSION["id"], $postId);
     }
 
-    public function GetLikesCount($postId)
+    public function GetLikesCount(int $postId): int
     {
         $likes = $this->likeSaveModel->getLikes($postId);
         return count($likes);
     }
 
-    public function isLiked($postId)
+    public function isLiked(int $postId): bool
     {
         $likes = $this->likeSaveModel->getLikes($postId);
         foreach ($likes as $like) {
@@ -93,7 +93,7 @@ class PostController
         return false;
     }
 
-    public function isSaved($postId)
+    public function isSaved(int $postId): bool
     {
         $saves = $this->likeSaveModel->getSaves($postId);
         foreach ($saves as $save) {
@@ -104,17 +104,17 @@ class PostController
         return false;
     }
 
-    public function getPosts($userId)
+    public function getPosts(int $userId): array
     {
         return $this->postModel->getPostsByUserId($userId);
     }
 
-    public function getUserPosts($userId)
+    public function getUserPosts(int $userId): array
     {
         return $this->userModel->findById($userId);
     }
 
-    function GetPost($id)
+    function GetPost(int $id): array
     {
         $posts = $this->postModel->getPost($id);
 

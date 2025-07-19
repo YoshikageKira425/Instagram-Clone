@@ -4,9 +4,9 @@ require 'vendor/autoload.php';
 
 use Medoo\Medoo;
 
-class Comment
+final class Comment
 {
-    private $db;
+    private Medoo $db;
 
     public function __construct()
     {
@@ -19,9 +19,9 @@ class Comment
         ]);
     }
 
-    public function addComment($userId, $postId, $commentText)
+    public function addComment(int $userId, int $postId, int $commentText): void
     {
-        return $this->db->insert("comments", [
+        $this->db->insert("comments", [
             "user_id" => $userId,
             "post_id" => $postId,
             "content" => $commentText,
@@ -29,7 +29,7 @@ class Comment
         ]);
     }
 
-    public function getComments($postId)
+    public function getComments(int $postId): array
     {
         return $this->db->select("comments", [
             "[>]users" => ["user_id" => "id"]
@@ -40,15 +40,15 @@ class Comment
             "users.url"
         ], [
             "post_id" => $postId
-        ]);
+        ]) ?? [];
     }
 
-    public function deleteComment($commentId)
+    public function deleteComment(int $commentId): int
     {
         return $this->db->delete("comments", ["id" => $commentId])->rowCount();
     }
 
-    public function updateComment($commentId, $newText)
+    public function updateComment(int $commentId, string $newText):int
     {
         return $this->db->update("comments", ["comment_text" => $newText], ["id" => $commentId])->rowCount();
     }

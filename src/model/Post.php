@@ -5,9 +5,9 @@ require_once  __DIR__ . "/../helpers.php";
 
 use Medoo\Medoo;
 
-class Post
+final class Post
 {
-    private $db;
+    private Medoo $db;
 
     public function __construct()
     {
@@ -20,7 +20,7 @@ class Post
         ]);
     }
 
-    public function insertPost($data, $file)
+    public function insertPost(array $data, array $file): void
     {
         try {
             $imagePath = SaveTheImage($file);
@@ -33,25 +33,24 @@ class Post
         $data["created_at"] = date("Y-m-d");
 
         $this->db->insert('posts', $data);
-        return $this->db->id();
     }
-    public function updatePost($id, $data, $file)
+    public function updatePost(int $id, array $data, array $file): void
     {
         $data["image"] = SaveTheImage($file);
         $data["edited_at"] = date("Y-m-d");
 
-        return $this->db->update('posts', $data, ['id' => $id])->rowCount();
+        $this->db->update('posts', $data, ['id' => $id])->rowCount();
     }
 
-    public function deletePost($id)
+    public function deletePost(int $id): int
     {
         return $this->db->delete('posts', ['id' => $id])->rowCount();
     }
-    public function getPostsByUserId($userId)
+    public function getPostsByUserId(int $userId): int
     {
         return $this->db->select('posts', '*', ['user_id' => $userId]);
     }
-    public function getPost($id)
+    public function getPost(int $id): array
     {
         return $this->db->get('posts', '*', ['id' => $id]);
     }

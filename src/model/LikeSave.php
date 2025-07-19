@@ -4,9 +4,9 @@ require 'vendor/autoload.php';
 
 use Medoo\Medoo;
 
-class LikeSave
+final class LikeSave
 {
-    private $db;
+    private Medoo $db;
 
     public function __construct()
     {
@@ -19,34 +19,32 @@ class LikeSave
         ]);
     }
 
-    public function getLikes($postId)
+    public function getLikes(int $postId): array
     {
         return $this->db->select("likes", "*", ["post_id" => $postId]);
     }
     
-    public function getSaves($postId)
+    public function getSaves(int $postId): array
     {
         return $this->db->select("saved", "*", ["post_id" => $postId]);
     }
 
-    public function likePost($userId, $postId)
+    public function likePost(int $userId, int $postId): void
     {
         $this->db->insert("likes", ["user_id" => $userId, "post_id" => $postId]);
-        return $this->db->id();
     }
 
-    public function savePost($userId, $postId)
+    public function savePost(int $userId, int $postId): void
     {
         $this->db->insert("saved", ["user_id" => $userId, "post_id" => $postId]);
-        return $this->db->id();
     }
 
-    public function deleteLike($userId, $postId)
+    public function deleteLike(int $userId, int $postId): int
     {
         return $this->db->delete("likes", ["user_id" => $userId, "post_id" => $postId])->rowCount();
     }
 
-    public function deleteSave($userId, $postId)
+    public function deleteSave(int $userId, int $postId): int
     {
         return $this->db->delete("saved", ["user_id" => $userId, "post_id" => $postId])->rowCount();
     }

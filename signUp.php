@@ -2,7 +2,7 @@
 
 session_start();
 
-require __DIR__ . "/src/controllers/AuthContoller.php";
+require __DIR__ . "/src/controllers/AuthController.php";
 
 $_SESSION["error"] = "";
 if (!empty($_POST) && $_SERVER["REQUEST_METHOD"] == "POST") 

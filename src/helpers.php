@@ -1,10 +1,11 @@
 <?php
 
 require 'vendor/autoload.php';
+require_once __DIR__ . "/model/User.php";
 
 use Medoo\Medoo;
 
-function SaveTheImage($file)
+function SaveTheImage(array $file): string
 {
     $uploadDir = __DIR__ . '/../assets/images/upload/';
     
@@ -18,7 +19,7 @@ function SaveTheImage($file)
     if (!in_array($fileType, $allowedTypes)) {
         $_SESSION["error"] = 'Invalid file type.';
         throw new Exception("Invalid file type.");
-        return;
+        return "";
     }
 
     if (move_uploaded_file($file['tmp_name'], $targetFile))
@@ -27,28 +28,21 @@ function SaveTheImage($file)
         $_SESSION["error"] = "Failed to move uploaded file.";
         throw new Exception("Failed to move uploaded file.");
     }
+    return "";
 }
 
-function GetCurrentUser()
+function GetCurrentUser(): array
 {
-    $db = new Medoo([
-        'type' => 'mysql',
-        'host' => 'localhost',
-        'database' => 'instagram_clone',
-        'username' => 'root',
-        'password' => ''
-    ]);
-
-    return $db->get("users", "*", ["id" => $_SESSION["id"]]);
+    return (new User)->findById($_SESSION["int"]);
 }
 
-function GetTheUrlValue()
+function GetTheUrlValue(int $index = 2): string
 {
     $parts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-    return $parts[2] ?? "";
+    return $parts[$index] ?? "";
 }
 
-function GetUserUrl($url)
+function GetUserUrl(string $url): array
 {
     $db = new Medoo([
         'type' => 'mysql',
@@ -65,10 +59,10 @@ function GetUserUrl($url)
         exit;
     }
 
-    return $users[0];
+    return $users[0] ?? [];
 }
 
-function GetPost($id)
+function GetPost(int $id): array
 {
     $db = new Medoo([
         'type' => 'mysql',
@@ -85,5 +79,5 @@ function GetPost($id)
         exit;
     }
 
-    return $posts[0];
+    return $posts[0] ?? [];
 }
