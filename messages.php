@@ -21,7 +21,6 @@ $user = GetCurrentUser();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram</title>
     <link rel="shortcut icon" href="/Instagram_Clone/assets/images/icon.png" type="image/x-icon">
-    <link rel="stylesheet" href="/Instagram_Clone/assets/style/output.css   ">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
@@ -29,7 +28,7 @@ $user = GetCurrentUser();
     <nav class="fixed left-0 top-0 h-screen w-[72px] bg-black border-r border-neutral-800 flex flex-col justify-between text-white transition-all">
         <div class="flex flex-col">
             <div class="px-4 pt-5">
-                <a href="/" class="px-4 py-3 rounded-xl hover:bg-neutral-800 transition ">
+                <a href="/">
                     <img class="w-auto h-8" src="./assets/images/icon.png" alt="">
                 </a>
             </div>

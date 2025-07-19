@@ -43,18 +43,16 @@ class Post
         return $this->db->update('posts', $data, ['id' => $id])->rowCount();
     }
 
-    public function likePost($userId, $postId)
-    {
-        $this->db->insert("likes", ["user_id" => $userId, "post_id" => $postId]);
-        return $this->db->id();
-    }
-
     public function deletePost($id)
     {
         return $this->db->delete('posts', ['id' => $id])->rowCount();
     }
-    public function getPosts($userId)
+    public function getPostsByUserId($userId)
     {
         return $this->db->select('posts', '*', ['user_id' => $userId]);
+    }
+    public function getPost($id)
+    {
+        return $this->db->get('posts', '*', ['id' => $id]);
     }
 }
