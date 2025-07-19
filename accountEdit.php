@@ -1,7 +1,10 @@
 <?php
 
-require __DIR__ . "/src/helpers.php";
-require __DIR__ . "/src/controllers/AuthController.php";
+declare(strict_types=1);
+
+require_once __DIR__ . "/src/helpers.php";
+require_once __DIR__ . "/src/controllers/AuthController.php";
+require_once __DIR__ . "/src/controllers/UserController.php";
 
 session_start();
 
@@ -10,11 +13,32 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"]))
-    (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
+
+/** @var UserController $userController */
+$userController = new UserController();
 
 /** @var array $user */
 $user = GetCurrentUser();
+
+$_SESSION["security_error"] = "";
+$_SESSION["photo_error"] = "";
+if (!empty($_POST)) {
+    if (!empty($_POST["username"]))
+        $userController->updateAccountInfo($user, $_POST);
+
+    if (!empty($_POST["currentPassword"]) && !empty($_POST["newPassword"]) && !empty($_POST["confirmPassword"]))
+        $userController->updateSecurity($user, $_POST);
+
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+if (!empty($_FILES) && !empty($_FILES["photo"])) {
+    $userController->updateProfile($user, $_FILES["photo"]);
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
 
 ?>
 
@@ -119,28 +143,26 @@ $user = GetCurrentUser();
                 </div>
             </div>
 
-            <div class=" bg-neutral-800 p-4 rounded-xl">
-                <h2 class="text-center text-2xl text-white font-bold">Account Information</h2>
-                <?php if (!empty($_SESSION["account_error"])): ?>
-                    <h2 class="text-base font-medium text-red-600 mb-6"><?= $_SESSION["account_error"] ?></h2>
-                <?php endif; ?>
+            <form class="flex flex-col gap-10" id="form" method="post">
+                <div class=" bg-neutral-800 p-4 rounded-xl">
+                    <h2 class="text-center text-2xl text-white font-bold">Account Information</h2>
+                    <?php if (!empty($_SESSION["account_error"])): ?>
+                        <h2 class="text-base font-medium text-red-600 mb-6"><?= $_SESSION["account_error"] ?></h2>
+                    <?php endif; ?>
 
-                <form method="post" class="form" id="form">
                     <div class="mt-4">
                         <label for="username" class="block text-base font-bold text-neutral-500 dark:text-neutral-300">Username</label>
 
                         <input type="text" name="username" placeholder="Username" value="<?= $user["username"] ?>" class="block mt-2 w-full placeholder-neutral-400/70 dark:placeholder-neutral-500 rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-neutral-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-300 dark:focus:border-blue-300" />
                     </div>
-                </form>
-            </div>
+                </div>
 
-            <div class="bg-neutral-800 p-4 rounded-xl">
-                <h2 class="text-center text-2xl text-white font-bold">Security</h2>
-                <?php if (!empty($_SESSION["security_error"])): ?>
-                    <h2 class="text-base font-medium text-red-600 mb-6"><?= $_SESSION["security_error"] ?></h2>
-                <?php endif; ?>
+                <div class="bg-neutral-800 p-4 rounded-xl">
+                    <h2 class="text-center text-2xl text-white font-bold">Security</h2>
+                    <?php if (!empty($_SESSION["security_error"])): ?>
+                        <h2 class="text-base font-medium text-red-600 mb-6"><?= $_SESSION["security_error"] ?></h2>
+                    <?php endif; ?>
 
-                <form method="post" class="form">
                     <div class="mt-4 flex flex-col gap-4">
                         <div>
                             <label for="currentPassword" class="block text-base font-bold text-neutral-500 dark:text-neutral-300">Current Password</label>
@@ -158,18 +180,18 @@ $user = GetCurrentUser();
                             <input type="text" name="confirmPassword" placeholder="Confirm Password..." class="block mt-2 w-full placeholder-neutral-400/70 dark:placeholder-neutral-500 rounded-lg border border-neutral-200 bg-white px-5 py-2.5 text-neutral-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-300 dark:focus:border-blue-300" />
                         </div>
                     </div>
-                </form>
-            </div>
-
-            <div class="bg-neutral-800 rounded-lg shadow p-6 border border-red-500/30">
-                <h2 class="text-lg font-medium text-white mb-6">Danger Zone</h2>
-                <div class="space-y-4">
-                    <form class="form" method="post">
-                        <p class="text-sm text-neutral-400 mb-4">Deleting your account will remove all of your data from our servers. This action cannot be undone.</p>
-                        <button type="submit" name="action" value="delete" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
-                    </form>
                 </div>
-            </div>
+
+                <div class="bg-neutral-800 rounded-lg shadow p-6 border border-red-500/30">
+                    <h2 class="text-lg font-medium text-white mb-6">Danger Zone</h2>
+                    <div class="space-y-4">
+                        <form class="form" method="post">
+                            <p class="text-sm text-neutral-400 mb-4">Deleting your account will remove all of your data from our servers. This action cannot be undone.</p>
+                            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
+                        </form>
+                    </div>
+                </div>
+            </form>
 
             <div class="flex justify-end space-x-4 pt-3">
                 <button onclick="Cancel()" type="button" class="inline-flex items-center px-4 py-2 border border-gray-600 text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
@@ -179,25 +201,21 @@ $user = GetCurrentUser();
     </div>
 
     <script>
-        const forms = document.getElementsByClassName("form");
+        const form = document.getElementById("form");
         document.getElementById("dropzone-file").addEventListener("change", () => document.getElementById("form-photo").submit());
 
         function Cancel() {
             if (!confirm("Are you sure?"))
                 return;
 
-            for (let i = 0; i < forms.length; i++) {
-                forms[i].reset();
-            }
+            form.reset();
         }
 
         function Save() {
             if (!confirm("Are you sure?"))
                 return;
 
-            for (let i = 0; i < forms.length; i++) {
-                forms[i].submit();
-            }
+            form.submit();
         }
     </script>
 </body>

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require 'vendor/autoload.php';
 require_once  __DIR__ . "/../helpers.php";
@@ -46,7 +47,7 @@ final class Post
     {
         return $this->db->delete('posts', ['id' => $id])->rowCount();
     }
-    public function getPostsByUserId(int $userId): int
+    public function getPostsByUserId(int $userId): array
     {
         return $this->db->select('posts', '*', ['user_id' => $userId]);
     }

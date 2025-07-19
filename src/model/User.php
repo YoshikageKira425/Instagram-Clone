@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require 'vendor/autoload.php';
 require_once  __DIR__ . "/../helpers.php";
@@ -70,6 +71,7 @@ final class User
     {
         return $this->db->get('users', '*', ['email' => $email]) ?? [];
     }
+    
     public function findById(int $id): array
     {
         return $this->db->get('users', '*', ['id' => $id]) ?? [];

@@ -14,9 +14,9 @@ final class UserController
 
     public function handleFollowAction(string $action, int $follow_by, int $follow_to): void
     {
-        if ($action == "followed")
+        if ($action === "followed")
             $this->userModel->followSomeone($follow_by, $follow_to);
-        else if ($action == "unfollowed")
+        else if ($action === "unfollowed")
             $this->userModel->unFollowSomeone($follow_by, $follow_to);
 
         header("Location: " . $_SERVER['REQUEST_URI']);
@@ -43,9 +43,6 @@ final class UserController
         $user["username"] = $data["username"];
 
         $this->userModel->updatedUser($user["id"], $user);
-
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit;
     }
 
     public function updateSecurity(array $user, array $data): void
@@ -55,14 +52,31 @@ final class UserController
             return;
         }
 
-        if (strlen($data["newPassword"]) < 6)
+        if (strlen($data["newPassword"]) < 6){
+            $_SESSION["security_error"] = "The new password is too short.";
+            return;
+        }
+
+        if ($data["newPassword"] !== $data["confirmPassword"]) {
+            $_SESSION["security_error"] = "The new password and confirm password do not match.";
+            return;
+        }
 
         $password_hash = password_hash($data["newPassword"], PASSWORD_DEFAULT);
         $user["password"] = $password_hash;
+        $_SESSION["security_error"] = "";
 
         $this->userModel->updatedUser($user["id"], $user);
+    }
 
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit;
+    public function updateProfile(array $user, array $file): void
+    {
+        if (empty($file)) {
+            $_SESSION["photo_error"] = "Please select an image to upload.";
+            return;
+        }
+
+        $_SESSION["photo_error"] = "";
+        $this->userModel->updatedUser($user["id"], $user, $file);
     }
 }

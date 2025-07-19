@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require 'vendor/autoload.php';
 require_once __DIR__ . "/model/User.php";
 
@@ -8,7 +10,7 @@ use Medoo\Medoo;
 function SaveTheImage(array $file): string
 {
     $uploadDir = __DIR__ . '/../assets/images/upload/';
-    
+
     $originalName = preg_replace("/[^A-Za-z0-9\-_\.]/", '_', basename($file['name']));
     $filename = uniqid() . '-' . $originalName;
     $targetFile = $uploadDir . $filename;
@@ -33,7 +35,10 @@ function SaveTheImage(array $file): string
 
 function GetCurrentUser(): array
 {
-    return (new User)->findById($_SESSION["int"]);
+    if (isset($_SESSION["id"]) && is_numeric((int)$_SESSION["id"])) {
+        return (new User)->findById((int)$_SESSION["id"]);
+    }
+    return [];
 }
 
 function GetTheUrlValue(int $index = 2): string

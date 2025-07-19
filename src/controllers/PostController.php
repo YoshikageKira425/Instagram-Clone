@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . "/../model/Post.php";
 require_once __DIR__ . "/../model/User.php";
 require_once __DIR__ . "/../model/LikeSave.php";

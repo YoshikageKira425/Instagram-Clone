@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require 'vendor/autoload.php';
 
@@ -19,7 +20,7 @@ final class Comment
         ]);
     }
 
-    public function addComment(int $userId, int $postId, int $commentText): void
+    public function addComment(int $userId, int $postId, string $commentText): void
     {
         $this->db->insert("comments", [
             "user_id" => $userId,

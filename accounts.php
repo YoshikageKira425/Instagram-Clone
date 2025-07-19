@@ -1,9 +1,9 @@
 <?php
 
-require __DIR__ . "/src/helpers.php";
-require __DIR__ . "/src/controllers/PostController.php";
-require __DIR__ . "/src/controllers/UserContoller.php";
-require __DIR__ . "/src/controllers/AuthController.php";
+require_once __DIR__ . "/src/helpers.php";
+require_once __DIR__ . "/src/controllers/PostController.php";
+require_once __DIR__ . "/src/controllers/UserController.php";
+require_once __DIR__ . "/src/controllers/AuthController.php";
 
 session_start();
 
