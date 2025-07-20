@@ -79,4 +79,9 @@ final class UserController
         $_SESSION["photo_error"] = "";
         $this->userModel->updatedUser($user["id"], $user, $file);
     }
+
+    public function getUserById(int $id): array
+    {
+        return $this->userModel->findById($id);
+    }
 }

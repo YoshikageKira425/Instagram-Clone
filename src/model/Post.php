@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-require 'vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 require_once  __DIR__ . "/../helpers.php";
 
 use Medoo\Medoo;
@@ -41,6 +42,11 @@ final class Post
         $data["edited_at"] = date("Y-m-d");
 
         $this->db->update('posts', $data, ['id' => $id])->rowCount();
+    }
+
+    public function getAllPosts(): array
+    {
+        return $this->db->select('posts', ["[>]users" => ["user_id" => "id"]], ["posts.id", "users.username", "users.profile_image", "posts.content", "posts.image"], ['ORDER' => ['created_at' => 'DESC']]) ?? [];
     }
 
     public function deletePost(int $id): int

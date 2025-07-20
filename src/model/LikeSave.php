@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-require 'vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Medoo\Medoo;
 
@@ -24,19 +25,37 @@ final class LikeSave
     {
         return $this->db->select("likes", "*", ["post_id" => $postId]);
     }
-    
+
+    public function getLikedPostsByUserId(int $userId): array
+    {
+        return $this->db->select("likes", ["[>]posts" => ["post_id" => "id"]], ["posts.id", "posts.user_id", "posts.content", "posts.image"], ["likes.user_id" => $userId]) ?? [];
+    }
+
     public function getSaves(int $postId): array
     {
         return $this->db->select("saved", "*", ["post_id" => $postId]);
     }
 
+    public function getSavedPostsByUserId(int $userId): array
+    {
+        return $this->db->select("saved", ["[>]posts" => ["post_id" => "id"]], ["posts.id", "posts.user_id", "posts.content", "posts.image"], ["saved.user_id" => $userId]) ?? [];
+    }
+
     public function likePost(int $userId, int $postId): void
     {
+        if ($this->db->has("likes", ["user_id" => $userId, "post_id" => $postId])) {
+            return;
+        }
+
         $this->db->insert("likes", ["user_id" => $userId, "post_id" => $postId]);
     }
 
     public function savePost(int $userId, int $postId): void
     {
+        if ($this->db->has("saved", ["user_id" => $userId, "post_id" => $postId])) {
+            return;
+        }
+
         $this->db->insert("saved", ["user_id" => $userId, "post_id" => $postId]);
     }
 

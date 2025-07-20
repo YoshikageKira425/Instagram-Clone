@@ -13,6 +13,7 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
 if (!empty($_POST) && !empty($_POST["logout"]))
     (new AuthController)->logOut();
 
+/** @var array $user */
 $user = GetCurrentUser();
 
 ?>

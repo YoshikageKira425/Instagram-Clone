@@ -23,9 +23,26 @@ $userController = new UserController();
 $urlUser = GetUserUrl(GetTheUrlValue());
 /** @var array $post */
 $post = $postController->getPosts($urlUser["id"]);
+/** @var int $postCount */
+$postCount = count($post);
 
 /** @var array $user */
 $user = GetCurrentUser();
+
+if ($urlUser["id"] === $user["id"]) {
+    $whatTypeOfPosts = GetTheUrlValue(3);
+
+    if (!empty($whatTypeOfPosts) && $whatTypeOfPosts === "likes")
+        $post = $postController->getLikedPosts($user["id"]);
+    elseif (!empty($whatTypeOfPosts) && $whatTypeOfPosts === "saved")
+        $post = $postController->getSavedPosts($user["id"]);
+} else {
+    if (!empty(GetTheUrlValue(3)))
+    {
+        header("Location: /Instagram_Clone/notFound.php");
+        exit;
+    }
+}
 
 /** @var bool @isFollowedToSomeone */
 $isFollowedToSomeone = $userController->isFollowedToSomeone($user["id"], $urlUser["id"]);
@@ -142,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
                         <?php endif; ?>
                     </div>
                     <div class="flex space-x-14">
-                        <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= count($post) ?></b> posts</p>
+                        <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $postCount ?></b> posts</p>
                         <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowerCount($urlUser["id"]) ?></b> followers</p>
                         <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowingCount($urlUser["id"]) ?></b> following</p>
                     </div>

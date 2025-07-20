@@ -56,6 +56,11 @@ class PostController
         $this->postModel->updatePost($id, $data, $file["file"]);
     }
 
+    public function getAllPosts(): array
+    {
+        return $this->postModel->getAllPosts();
+    }
+
     public function insertComment(int $user_id, int $post_id, string $content): void
     {
         $this->commentModel->addComment($user_id, $post_id, $content);
@@ -66,16 +71,26 @@ class PostController
         return $this->commentModel->getComments($postId);
     }
 
-    public function handleLikeAndSave(int $postId, string $action):void
+    public function toggleLike(int $userId, int $postId): int
     {
-        if ($action === 'like')
-            $this->likeSaveModel->likePost($_SESSION["id"], $postId);
-        elseif ($action === 'save')
-            $this->likeSaveModel->savePost($_SESSION["id"], $postId);
-        elseif ($action === 'unlike')
-            $this->likeSaveModel->deleteLike($_SESSION["id"], $postId);
-        elseif ($action === 'unsave')
-            $this->likeSaveModel->deleteSave($_SESSION["id"], $postId);
+        if ($this->isLiked($postId)) {
+            $this->likeSaveModel->deleteLike($userId, $postId);
+        } else {
+            $this->likeSaveModel->likePost($userId, $postId);
+        }
+
+        return $this->GetLikesCount($postId);
+    }
+
+    public function toggleSave(int $userId, int $postId): int
+    {
+        if ($this->isSaved($postId)) {
+            $this->likeSaveModel->deleteSave($userId, $postId);
+        } else {
+            $this->likeSaveModel->savePost($userId, $postId);
+        }
+
+        return $this->GetLikesCount($postId);
     }
 
     public function GetLikesCount(int $postId): int
@@ -104,6 +119,16 @@ class PostController
             }
         }
         return false;
+    }
+
+    public function getLikedPosts(int $userId): array
+    {
+        return $this->likeSaveModel->getLikedPostsByUserId($userId);
+    }
+
+    public function getSavedPosts(int $userId): array
+    {
+        return $this->likeSaveModel->getSavedPostsByUserId($userId);
     }
 
     public function getPosts(int $userId): array

@@ -13,7 +13,8 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"]))
+    (new AuthController)->logOut();
 
 /** @var UserController $userController */
 $userController = new UserController();

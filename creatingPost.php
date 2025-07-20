@@ -14,6 +14,7 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
 if (!empty($_POST) && !empty($_POST["logout"]))
     (new AuthController)->logOut();
 
+/** @var PostController $postController */
 $user = GetCurrentUser();
 
 $_SESSION["error"] = "";
