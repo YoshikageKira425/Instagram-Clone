@@ -116,9 +116,9 @@ $posts = $postController->getSomePosts(4);
                             </a>
                         </div>
 
-                        <div>
+                        <a href="/Instagram_Clone/post.php/<?= $post["id"] ?>">
                             <img src="<?= $post["image"] ?>" alt="Post Image" class="w-full object-cover max-h-[500px]">
-                        </div>
+                        </a>
 
                         <div class="px-4 py-3">
                             <div class="flex items-center space-x-4">
@@ -169,8 +169,8 @@ $posts = $postController->getSomePosts(4);
                     <div class="w-80 bg-neutral-700 text-white rounded-lg shadow flex flex-col h-[500px] hidden commentsSection">
                         <div class="px-4 py-3 border-b border-gray-600 font-semibold">Comments</div>
                         <div class="flex-grow overflow-y-auto px-4 py-3 space-y-3 commentsList">
-                            <?php $comments = $postController->getComments($post["id"]); 
-                                if (!empty($comments)): ?>
+                            <?php $comments = $postController->getComments($post["id"]);
+                            if (!empty($comments)): ?>
                                 <?php foreach ($comments as $c): ?>
                                     <div>
                                         <a href="/Instagram_Clone/accounts.php/<?= $c["url"] ?>" class="font-semibold flex">
@@ -195,10 +195,26 @@ $posts = $postController->getSomePosts(4);
         </div>
     </div>
 
-    <script src="/Instagram_Clone/assets/code/likeLogic.js"></script>
-    <script src="/Instagram_Clone/assets/code/saveLogic.js"></script>
-    <script src="/Instagram_Clone/assets/code/commentLogic.js"></script>
-    <script src="/Instagram_Clone/assets/code/infiniteScroll.js"></script>
+
+    <script src="/Instagram_Clone/assets/code/infiniteScrollForHome.js"></script>
+    <script type="module">
+        import {saveLogic} from '/Instagram_Clone/assets/code/saveLogic.js';
+        import {likeLogic} from '/Instagram_Clone/assets/code/likeLogic.js';
+        import {commentLogic} from '/Instagram_Clone/assets/code/commentLogic.js';
+
+        const observer = new MutationObserver((mutationsList, observer) => {
+            for (const mutation of mutationsList) {
+                saveLogic();
+                likeLogic();
+                commentLogic();
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
 </body>
 
 </html>

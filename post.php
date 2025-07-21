@@ -195,9 +195,9 @@ if (!empty($_POST) && isset($_POST["comment"]))
         </div>
     </div>
 
-    <script src="/Instagram_Clone/assets/code/commentLogic.js"></script>
-    <script src="/Instagram_Clone/assets/code/likeLogic.js"></script>
-    <script src="/Instagram_Clone/assets/code/saveLogic.js"></script>
+    <script type="module" src="/Instagram_Clone/assets/code/commentLogic.js"></script>
+    <script type="module" src="/Instagram_Clone/assets/code/likeLogic.js"></script>
+    <script type="module" src="/Instagram_Clone/assets/code/saveLogic.js"></script>
 
 </body>
 

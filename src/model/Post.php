@@ -44,6 +44,24 @@ final class Post
         $this->db->update('posts', $data, ['id' => $id])->rowCount();
     }
 
+    public function searchPosts(string $query): array
+    {
+        return $this->db->select('posts', [
+            "[>]users" => ["user_id" => "id"]
+        ], [
+            "posts.id",
+            "users.url",
+            "posts.content",
+            "posts.image"
+        ], [
+            'OR' => [
+                'posts.content[~]' => $query,
+                'users.username[~]' => $query
+            ],
+            'ORDER' => ['created_at' => 'DESC']
+        ]) ?? [];
+    }
+
     public function getSomePosts(int $limit, $offset): array
     {
         return $this->db->select('posts', ["[>]users" => ["user_id" => "id"]], ["posts.id", "users.username", "users.url", "users.profile_image", "posts.content", "posts.image"], ['ORDER' => ['created_at' => 'DESC'], 'LIMIT' => [$offset, $limit]]) ?? [];

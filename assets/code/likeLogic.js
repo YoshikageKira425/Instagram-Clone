@@ -1,7 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
+export function likeLogic()
+{
     const likeButtons = document.querySelectorAll('.like-button');
 
     likeButtons.forEach(button => {
+        if (button.clickHandler)
+            button.removeEventListener('click', button.clickHandler);
+
         button.addEventListener('click', function(e) {
             e.preventDefault();
 
@@ -46,4 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-});
+}
+
+likeLogic();

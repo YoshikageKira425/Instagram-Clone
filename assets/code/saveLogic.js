@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function() {
+export function saveLogic()
+{
     const likeButtons = document.querySelectorAll('.save-button');
 
     likeButtons.forEach(button => {
@@ -43,4 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-});
+}
+
+saveLogic();

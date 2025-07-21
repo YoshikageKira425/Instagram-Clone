@@ -38,6 +38,11 @@ final class UserController
         return count($this->userModel->getFollowedBy($id));
     }
 
+    public function getFollowedBy(int $id): array
+    {
+        return $this->userModel->getFollowedBy($id);
+    }
+
     public function updateAccountInfo(array $user, array $data): void
     {
         $user["username"] = $data["username"];
@@ -83,5 +88,15 @@ final class UserController
     public function getUserById(int $id): array
     {
         return $this->userModel->findById($id);
+    }
+
+    public function searchUsers(string $query): array
+    {
+        if (strlen($query) < 3) {
+            return [];
+        }
+
+        $query = htmlspecialchars($query);
+        return $this->userModel->searchUsers($query);
     }
 }

@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+export function commentLogic() 
+{
     const postContainers = document.querySelectorAll('.postContainer');
 
     postContainers.forEach(container => {
@@ -8,10 +9,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const postButton = container.querySelector('.post-btn');
         const commentsList = container.querySelector('.commentsList');
 
+        if (commentButton.clickHandler)
+            commentButton.removeEventListener('click', commentButton.clickHandler);
+
         commentButton.addEventListener('click', function (event) {
             event.preventDefault();
             commentsSection.classList.toggle('hidden');
         });
+
+        if (postButton.clickHandler)
+            postButton.removeEventListener('click', postButton.clickHandler);
 
         postButton.addEventListener('click', function (event) {
             event.preventDefault();
@@ -60,4 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
         });
     });
-});
+}
+
+commentLogic();

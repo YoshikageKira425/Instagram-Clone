@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -42,6 +43,20 @@ final class User
     {
         return $this->db->delete('users', ['id' => $id])->rowCount();
     }
+    public function searchUsers(string $query): array
+    {
+        return $this->db->select('users', [
+            "id",
+            "username",
+            "url",
+            "profile_image"
+        ], [
+            'OR' => [
+                'username[~]' => $query,
+                'url[~]' => $query
+            ]
+        ]);
+    }
 
     public function followSomeone(int $follow_by, int $follow_to)
     {
@@ -53,7 +68,12 @@ final class User
     }
     public function getFollowedBy(int $follow_by): array
     {
-        return $this->db->select("followers", "*", ["followed_by" => $follow_by]) ?? [];
+        return $this->db->select(
+            "followers",
+            ["[>]users" => ["followed_to" => "id"]],
+            ["users.id", "users.username", "users.profile_image"],
+            ["followed_by" => $follow_by]
+        ) ?? [];
     }
     public function getFollowedTo(int $follow_to): array
     {
@@ -71,7 +91,7 @@ final class User
     {
         return $this->db->get('users', '*', ['email' => $email]) ?? [];
     }
-    
+
     public function findById(int $id): array
     {
         return $this->db->get('users', '*', ['id' => $id]) ?? [];

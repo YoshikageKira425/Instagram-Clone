@@ -56,6 +56,16 @@ class PostController
         $this->postModel->updatePost($id, $data, $file["file"]);
     }
 
+    public function searchPosts(string $query): array
+    {
+        if (strlen($query) < 3) {
+            return [];
+        }
+
+        $query = htmlspecialchars($query);
+        return $this->postModel->searchPosts($query);
+    }
+
     public function getSomePosts(int $limit, int $offset = 0): array
     {
         return $this->postModel->getSomePosts($limit, $offset);
