@@ -56,9 +56,9 @@ class PostController
         $this->postModel->updatePost($id, $data, $file["file"]);
     }
 
-    public function getAllPosts(): array
+    public function getSomePosts(int $limit, int $offset = 0): array
     {
-        return $this->postModel->getAllPosts();
+        return $this->postModel->getSomePosts($limit, $offset);
     }
 
     public function insertComment(int $user_id, int $post_id, string $content): void

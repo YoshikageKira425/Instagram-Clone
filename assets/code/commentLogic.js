@@ -1,48 +1,63 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const commentsSection = document.getElementById('commentsSection');
-    const commentButton = document.getElementById('commentButton');
+document.addEventListener('DOMContentLoaded', function () {
+    const postContainers = document.querySelectorAll('.postContainer');
 
-    const commentInput = document.getElementById('comment');
-    const postButton = document.getElementById('post-btn');
+    postContainers.forEach(container => {
+        const commentButton = container.querySelector('.commentButton');
+        const commentsSection = container.querySelector('.commentsSection');
+        const commentInput = container.querySelector('.comment');
+        const postButton = container.querySelector('.post-btn');
+        const commentsList = container.querySelector('.commentsList');
 
-    commentButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        commentsSection.classList.toggle('hidden');
-    });
+        commentButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            commentsSection.classList.toggle('hidden');
+        });
 
-    postButton.addEventListener('click', function(event) {
-        const postId = postButton.getAttribute('post-id');
-        const commentText = commentInput.value;
+        postButton.addEventListener('click', function (event) {
+            event.preventDefault();
 
-        if (!commentText || !postId) {
-            console.warn("Empty comment or missing post ID");
-            return;
-        }
+            const postId = postButton.getAttribute('post-id');
+            const commentText = commentInput.value.trim();
 
-        const formData = new FormData();
-        formData.append('content', commentText);
-        formData.append('id', postId);
+            if (!commentText || !postId) {
+                console.warn("Empty comment or missing post ID");
+                return;
+            }
 
-        fetch('/Instagram_Clone/src/api/comment.php', {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            const commentElement = document.createElement('div');
-            commentElement.innerHTML = `
-                <a href="/Instagram_Clone/accounts.php/${data.user.url}" class="font-semibold flex">
-                    <img src="${data.user.profile_image}" class="w-6 h-6 rounded-full" alt="">
-                    ${data.user.username}
-                </a>
-                <p class="text-sm">${data.comment}</p>
-            `;
+            const formData = new FormData();
+            formData.append('content', commentText);
+            formData.append('id', postId);
 
-            document.getElementById("commentsList").appendChild(commentElement);
-            commentInput.value = ''; 
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
+            fetch('/Instagram_Clone/src/api/comment.php', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.user || !data.comment) {
+                    console.warn('Malformed response:', data);
+                    return;
+                }
+
+                const noComments = commentsList.querySelector('.no-comments');
+                if (noComments) 
+                    noComments.remove();
+
+                const commentElement = document.createElement('div');
+                commentElement.innerHTML = `
+                    <a href="/Instagram_Clone/accounts.php/${data.user.url}" class="font-semibold flex items-center gap-2">
+                        <img src="${data.user.profile_image}" class="w-6 h-6 rounded-full" alt="">
+                        ${data.user.username}
+                    </a>
+                    <p class="text-sm">${data.comment}</p>
+                `;
+
+                commentsList.appendChild(commentElement);
+                commentInput.value = '';
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            })
         });
     });
 });

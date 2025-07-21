@@ -111,7 +111,7 @@ if (!empty($_POST) && isset($_POST["comment"]))
         </form>
     </nav>
 
-    <div class="min-h-screen flex justify-center items-center gap-4">
+    <div class="min-h-screen flex justify-center items-center gap-4 postContainer">
         <div class="max-w-md text-white border border-gray-800 rounded-lg shadow mb-6">
             <div class="flex items-center justify-between px-4 py-3">
                 <a href="/Instagram_Clone/accounts.php/<?= $postUser["url"] ?>" class="flex items-center space-x-3">
@@ -142,7 +142,7 @@ if (!empty($_POST) && isset($_POST["comment"]))
                         </span>
                     </button>
 
-                    <button id="commentButton" type="button">
+                    <button class="commentButton" type="button">
                         <svg aria-label="Comment" class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
                             <title>Comment</title>
                             <path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path>
@@ -170,10 +170,9 @@ if (!empty($_POST) && isset($_POST["comment"]))
                 <p class="mt-1 text-sm"><span class="font-semibold"><?= $postUser["username"] ?></span> <?= $post["content"] ?></p>
             </div>
         </div>
-
-        <div class="w-80 bg-neutral-700 text-white rounded-lg shadow flex flex-col h-[500px] hidden" class="commentsSection">
+        <div class="w-80 bg-neutral-700 text-white rounded-lg shadow flex flex-col h-[500px] hidden commentsSection">
             <div class="px-4 py-3 border-b border-gray-600 font-semibold">Comments</div>
-            <div class="flex-grow overflow-y-auto px-4 py-3 space-y-3" id="commentsList">
+            <div class="flex-grow overflow-y-auto px-4 py-3 space-y-3 commentsList">
                 <?php if (!empty($comments)): ?>
                     <?php foreach ($comments as $c): ?>
                         <div>
@@ -185,13 +184,13 @@ if (!empty($_POST) && isset($_POST["comment"]))
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <h1 class="text-white font-bold text-center text-2xl">No comments yet.</h1>
+                    <h1 class="no-comments text-white font-bold text-center text-2xl">No comments yet.</h1>
                 <?php endif; ?>
             </div>
 
             <div class="px-4 py-3 border-t border-neutral-600 flex space-x-2" method="post">
-                <input type="text" id="comment" placeholder="Add a comment..." class="flex-grow rounded bg-neutral-800 px-3 py-2 text-white placeholder-neutral-400 focus:outline-none" />
-                <button type="submit" post-id="<?= $post["id"] ?>" id="post-btn" class="text-blue-400 font-semibold hover:text-blue-600">Post</button>
+                <input type="text" placeholder="Add a comment..." class="comment flex-grow rounded bg-neutral-800 px-3 py-2 text-white placeholder-neutral-400 focus:outline-none" />
+                <button type="submit" post-id="<?= $post["id"] ?>" class="post-btn text-blue-400 font-semibold hover:text-blue-600">Post</button>
             </div>
         </div>
     </div>
