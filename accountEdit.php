@@ -188,7 +188,7 @@ if (!empty($_FILES) && !empty($_FILES["photo"])) {
                     <div class="space-y-4">
                         <form class="form" method="post">
                             <p class="text-sm text-neutral-400 mb-4">Deleting your account will remove all of your data from our servers. This action cannot be undone.</p>
-                            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
+                            <button type="button" id="deleteButton" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete Account</button>
                         </form>
                     </div>
                 </div>
@@ -204,6 +204,25 @@ if (!empty($_FILES) && !empty($_FILES["photo"])) {
     <script>
         const form = document.getElementById("form");
         document.getElementById("dropzone-file").addEventListener("change", () => document.getElementById("form-photo").submit());
+
+        document.getElementById("deleteButton").addEventListener("click", function() {
+            if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+                fetch('/Instagram_Clone/src/api/deleteAccount.php', {
+                    method: 'POST',
+                    body: JSON.stringify({ delete: true })
+                }).then(response => {
+                    if (response.ok) {
+                        alert("Your account has been deleted successfully.");
+                        window.location.href = '/Instagram_Clone/signUp.php';
+                    } else {
+                        alert("There was an error deleting your account. Please try again later.");
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert("There was an error deleting your account. Please try again later.");
+                });
+            }
+        });
 
         function Cancel() {
             if (!confirm("Are you sure?"))

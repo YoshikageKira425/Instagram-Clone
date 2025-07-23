@@ -22,13 +22,14 @@ final class User
         ]);
     }
 
-    public function insertUser(array $data): void
+    public function insertUser(array $data): int
     {
         $data["profile_image"] = "/Instagram_Clone/assets/images/defaultPic.png";
         $data["join_at"] = date("Y-m-d");
         $data["url"] = preg_replace('/\s+/', '', strtolower(htmlspecialchars($data["username"])));
 
         $this->db->insert('users', $data);
+        return (int)$this->db->id();
     }
     public function updatedUser(int $id, array $data, array $file = []): void
     {

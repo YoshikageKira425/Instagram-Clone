@@ -31,20 +31,6 @@ class MessageController
         return $this->messagesModel->getMessages($userId, $friendId);
     }
 
-    public function newMessagesAppeared(int $userId, int $friendId): bool
-    {
-        $messages = array_filter(
-            $this->messagesModel->getMessages($userId, $friendId),
-            fn($message) => $message['sentBy'] !== $userId
-        );
-        if (empty($messages)) {
-            return false;
-        }
-        $lastMessage = end($messages);
-
-        return $lastMessage['status'] !== "seen";        
-    }
-
     public function sendMessage(int $sentById, int $sentToId, string $message): void
     {
         var_dump($sentById, $sentToId, $message);

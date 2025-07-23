@@ -99,4 +99,12 @@ final class UserController
         $query = htmlspecialchars($query);
         return $this->userModel->searchUsers($query);
     }
+
+    public function deleteAccount(): void
+    {
+        $this->userModel->deleteUser($_SESSION["id"]);
+        session_destroy();
+        header("Location: /Instagram_Clone/signUp.php");
+        exit;
+    }
 }

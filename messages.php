@@ -120,9 +120,6 @@ $friends = array_values($uniqueFriends);
                             <img src="<?= $friend["profile_image"] ?>" alt="<?= $friend["username"] ?>" class="w-8 h-8 rounded-full">
                             <div>
                                 <span><?= $friend["username"] ?></span>
-                                <?php if ($messageController->newMessagesAppeared($user["id"], $friend["id"])): ?>
-                                    <p class="text-neutral-600 text-xs">New message</p>
-                                <?php endif; ?>
                             </div>
                         </button>
                     <?php endforeach; ?>
