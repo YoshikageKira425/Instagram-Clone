@@ -3,12 +3,11 @@ export function likeLogic()
     const likeButtons = document.querySelectorAll('.like-button');
 
     likeButtons.forEach(button => {
-        if (button.clickHandler)
-            button.removeEventListener('click', button.clickHandler);
-
-        button.addEventListener('click', function(e) {
+        if (button.likeClickHandler) {
+            button.removeEventListener('click', button.likeClickHandler);
+        }
+        const handler = (e) => {
             e.preventDefault();
-
 
             const postId = button.getAttribute('data-post-id');
             const likeText = document.getElementById('like-text-' + postId);
@@ -48,7 +47,10 @@ export function likeLogic()
             .catch(error => {
                 console.error('AJAX Error:', error);
             });
-        });
+        }
+
+        button.likeClickHandler = handler;
+        button.addEventListener('click', handler);
     });
 }
 

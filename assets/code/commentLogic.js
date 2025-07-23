@@ -1,72 +1,78 @@
-export function commentLogic() 
-{
-    const postContainers = document.querySelectorAll('.postContainer');
+export function commentLogic() {
+  const postContainers = document.querySelectorAll('.postContainer');
 
-    postContainers.forEach(container => {
-        const commentButton = container.querySelector('.commentButton');
-        const commentsSection = container.querySelector('.commentsSection');
-        const commentInput = container.querySelector('.comment');
-        const postButton = container.querySelector('.post-btn');
-        const commentsList = container.querySelector('.commentsList');
+  postContainers.forEach(container => {
+    const commentButton = container.querySelector('.commentButton');
+    const commentsSection = container.querySelector('.commentsSection');
+    const commentInput = container.querySelector('.comment');
+    const postButton = container.querySelector('.post-btn');
+    const commentsList = container.querySelector('.commentsList');
 
-        if (commentButton.clickHandler)
-            commentButton.removeEventListener('click', commentButton.clickHandler);
+    if (commentButton.commentClickHandler) {
+      commentButton.removeEventListener('click', commentButton.commentClickHandler);
+    }
 
-        commentButton.addEventListener('click', function (event) {
-            event.preventDefault();
-            commentsSection.classList.toggle('hidden');
-        });
+    const commentHandler = function(event) {
+      event.preventDefault();
+      commentsSection.classList.toggle('hidden');
+    };
 
-        if (postButton.clickHandler)
-            postButton.removeEventListener('click', postButton.clickHandler);
+    commentButton.commentClickHandler = commentHandler;
+    commentButton.addEventListener('click', commentHandler);
 
-        postButton.addEventListener('click', function (event) {
-            event.preventDefault();
+    if (postButton.postClickHandler) {
+      postButton.removeEventListener('click', postButton.postClickHandler);
+    }
 
-            const postId = postButton.getAttribute('post-id');
-            const commentText = commentInput.value.trim();
+    const postHandler = function(event) {
+      event.preventDefault();
 
-            if (!commentText || !postId) {
-                console.warn("Empty comment or missing post ID");
-                return;
-            }
+      const postId = postButton.getAttribute('post-id');
+      const commentText = commentInput.value.trim();
 
-            const formData = new FormData();
-            formData.append('content', commentText);
-            formData.append('id', postId);
+      if (!commentText || !postId) {
+        console.warn("Empty comment or missing post ID");
+        return;
+      }
 
-            fetch('/Instagram_Clone/src/api/comment.php', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data || !data.user || !data.comment) {
-                    console.warn('Malformed response:', data);
-                    return;
-                }
+      const formData = new FormData();
+      formData.append('content', commentText);
+      formData.append('id', postId);
 
-                const noComments = commentsList.querySelector('.no-comments');
-                if (noComments) 
-                    noComments.remove();
+      fetch('/Instagram_Clone/src/api/comment.php', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data || !data.user || !data.comment) {
+          console.warn('Malformed response:', data);
+          return;
+        }
 
-                const commentElement = document.createElement('div');
-                commentElement.innerHTML = `
-                    <a href="/Instagram_Clone/accounts.php/${data.user.url}" class="font-semibold flex items-center gap-2">
-                        <img src="${data.user.profile_image}" class="w-6 h-6 rounded-full" alt="">
-                        ${data.user.username}
-                    </a>
-                    <p class="text-sm">${data.comment}</p>
-                `;
+        const noComments = commentsList.querySelector('.no-comments');
+        if (noComments) noComments.remove();
 
-                commentsList.appendChild(commentElement);
-                commentInput.value = '';
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            })
-        });
-    });
+        const commentElement = document.createElement('div');
+        commentElement.innerHTML = `
+          <a href="/Instagram_Clone/accounts.php/${data.user.url}" class="font-semibold flex items-center gap-2">
+            <img src="${data.user.profile_image}" class="w-6 h-6 rounded-full" alt="">
+            ${data.user.username}
+          </a>
+          <p class="text-sm">${data.comment}</p>
+        `;
+
+        commentsList.appendChild(commentElement);
+        commentInput.value = '';
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+      });
+    };
+
+    postButton.postClickHandler = postHandler;
+    postButton.addEventListener('click', postHandler);
+  });
 }
 
 commentLogic();

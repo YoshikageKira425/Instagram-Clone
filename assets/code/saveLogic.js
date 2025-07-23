@@ -1,9 +1,15 @@
 export function saveLogic()
 {
-    const likeButtons = document.querySelectorAll('.save-button');
+    const saveButtons = document.querySelectorAll('.save-button');
 
-    likeButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
+    saveButtons.forEach(button => {
+
+        if (button.saveClickHandler) {
+            button.removeEventListener('click', button.saveClickHandler);
+        }
+
+        const handler = (e) => 
+        {
             e.preventDefault();
 
             const postId = button.getAttribute('data-post-id');
@@ -42,7 +48,11 @@ export function saveLogic()
             .catch(error => {
                 console.error('AJAX Error:', error);
             });
-        });
+        }
+
+        button.saveClickHandler = handler;
+
+        button.addEventListener('click', handler);
     });
 }
 

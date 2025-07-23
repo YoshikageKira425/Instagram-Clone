@@ -198,16 +198,20 @@ $posts = $postController->getSomePosts(4);
 
     <script src="/Instagram_Clone/assets/code/infiniteScrollForHome.js"></script>
     <script type="module">
-        import {saveLogic} from '/Instagram_Clone/assets/code/saveLogic.js';
-        import {likeLogic} from '/Instagram_Clone/assets/code/likeLogic.js';
-        import {commentLogic} from '/Instagram_Clone/assets/code/commentLogic.js';
+        import {
+            saveLogic
+        } from '/Instagram_Clone/assets/code/saveLogic.js';
+        import {
+            likeLogic
+        } from '/Instagram_Clone/assets/code/likeLogic.js';
+        import {
+            commentLogic
+        } from '/Instagram_Clone/assets/code/commentLogic.js';
 
         const observer = new MutationObserver((mutationsList, observer) => {
-            for (const mutation of mutationsList) {
-                saveLogic();
-                likeLogic();
-                commentLogic();
-            }
+            saveLogic();
+            likeLogic();
+            commentLogic();
         });
 
         observer.observe(document.body, {
