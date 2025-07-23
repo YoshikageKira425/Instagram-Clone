@@ -11,10 +11,14 @@ if (!isset($_SESSION["id"], $_POST["post_id"])) {
     exit;
 }
 
+/** @var int $userId */
 $userId = $_SESSION["id"];
+/** @var int $postId */
 $postId = (int) $_POST["post_id"];
 
+/** @var PostController $postController */
 $postController = new PostController();
+/** @var int $newLikeCount */
 $newLikeCount = $postController->toggleSave($userId, $postId);
 
 echo json_encode(["likes" => $newLikeCount]);

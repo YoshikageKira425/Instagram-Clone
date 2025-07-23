@@ -1,8 +1,9 @@
 <?php
 
-require __DIR__ . "/src/helpers.php";
-require __DIR__ . "/src/controllers/AuthController.php";
-require __DIR__ . "/src/controllers/UserController.php";
+require_once __DIR__ . "/src/helpers.php";
+require_once __DIR__ . "/src/controllers/AuthController.php";
+require_once __DIR__ . "/src/controllers/UserController.php";
+require_once __DIR__ . "/src/controllers/MessageController.php";
 
 session_start();
 
@@ -18,15 +19,21 @@ $user = GetCurrentUser();
 
 /** @var UserController $userController */
 $userController = new UserController();
+/** @var MessageController $messageController */
+$messageController = new MessageController();
+
 /** @var array $friends */
 $friends = $userController->getFollowedBy($user["id"]);
-/** @var array $conversationWith */
-$conversationWith = null;
 
-if (!empty($_GET) && !empty($_GET["user_id"])) {
-    $conversationWith = $userController->getUserById($_GET["user_id"]);
+$friends = array_merge($friends, $messageController->getUsersThatTextYou());
+
+$uniqueFriends = [];
+
+foreach ($friends as $friend) {
+    $uniqueFriends[$friend['id']] = $friend;
 }
 
+$friends = array_values($uniqueFriends);
 ?>
 
 <!DOCTYPE html>
@@ -109,10 +116,15 @@ if (!empty($_GET) && !empty($_GET["user_id"])) {
             <?php if (!empty($friends)): ?>
                 <div class="flex-1 overflow-y-auto px-4 py-2 space-y-3">
                     <?php foreach ($friends as $friend): ?>
-                        <a href="/Instagram_Clone/messages.php?user_id=<?= $friend["id"] ?>" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
+                        <button friend-id="<?= $friend["id"] ?>" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
                             <img src="<?= $friend["profile_image"] ?>" alt="<?= $friend["username"] ?>" class="w-8 h-8 rounded-full">
-                            <span><?= $friend["username"] ?></span>
-                        </a>
+                            <div>
+                                <span><?= $friend["username"] ?></span>
+                                <?php if ($messageController->newMessagesAppeared($user["id"], $friend["id"])): ?>
+                                    <p class="text-neutral-600 text-xs">New message</p>
+                                <?php endif; ?>
+                            </div>
+                        </button>
                     <?php endforeach; ?>
                 </div>
             <?php else: ?>
@@ -122,19 +134,192 @@ if (!empty($_GET) && !empty($_GET["user_id"])) {
             <?php endif; ?>
         </div>
 
-        <?php if (empty($conversationWith)): ?>
-            <div class="flex justify-center items-center h-screen w-full">
-                <div class="text-center">
-                    <h1 class="text-2xl font-bold text-white mb-4">Messages</h1>
-                    <p class="text-gray-400">Start a conversation!</p>
+        <div class="flex justify-center items-center h-screen w-full" id="noConversation">
+            <div class="text-center">
+                <h1 class="text-2xl font-bold text-white mb-4">Messages</h1>
+                <p class="text-gray-400">Start a conversation!</p>
+            </div>
+        </div>
+
+        <div class="h-screen w-full flex flex-col text-white hidden" id="messagesContainer">
+            <div class="px-4 py-3 border-b border-neutral-800 flex items-center">
+                <img src="" class="w-14 h-14 rounded-full mr-3" id="conversationImage">
+                <h1 class="text-xl font-semibold" id="conversationName"></h1>
+            </div>
+
+            <div class="h-full overflow-y-auto px-4 py-3 flex-grow space-y-3" id="messagesList">
+
+
+                <div class="flex justify-center items-center h-full" id="noMessages">
+                    <p class="text-gray-400">No messages yet. Start the conversation!</p>
                 </div>
             </div>
-        <?php else: ?>
-            <div class="h-screen w-full">
 
+            <div class="relative w-full">
+                <form method="post" class="flex items-center p-4" id="messageForm">
+                    <input type="hidden" name="sentToId" id="sentToId">
+                    <input type="text" name="message" id="message" placeholder="Type a message..." class="flex-grow rounded bg-neutral-800 px-3 py-2 text-white placeholder-neutral-600 focus:outline-none" required>
+                    <button type="submit" class="ml-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Send</button>
+                </form>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
+
+    <script>
+        const CURRENT_USER_ID = <?= json_encode($user["id"]) ?>;
+        const CURRENT_USER_PROFILE_IMG = <?= json_encode($user["profile_image"]) ?>;
+
+        let CURRENT_FRIEND_ID = null;
+
+        const messagesList = document.getElementById("messagesList");
+        const noMessages = document.getElementById("noMessages");
+        const friendButtons = document.querySelectorAll("button[friend-id]");
+        const messagesContainer = document.getElementById("messagesContainer");
+        const noConversation = document.getElementById("noConversation");
+        const conversationImage = document.getElementById("conversationImage");
+        const conversationName = document.getElementById("conversationName");
+        const form = document.getElementById("messageForm");
+        const messageInput = document.getElementById("message");
+        const sentToInput = document.getElementById("sentToId");
+
+        const socket = new WebSocket("ws://localhost:8090");
+
+        socket.addEventListener("message", (event) => {
+            const data = JSON.parse(event.data);
+
+            console.log("Received message:", data);
+
+            if (data.from !== CURRENT_USER_ID && (
+                    (data.from === CURRENT_FRIEND_ID && data.to === CURRENT_USER_ID) ||
+                    (data.from === CURRENT_USER_ID && data.to === CURRENT_FRIEND_ID)
+                )) {
+                appendMessage(data);
+            }
+        });
+
+        socket.addEventListener("open", () => {
+            socket.send(JSON.stringify({
+                type: "register",
+                from: CURRENT_USER_ID
+            }));
+        });
+        socket.addEventListener("error", (e) => {
+            console.error("WebSocket error", e);
+        });
+        socket.addEventListener("close", () => {
+            console.warn("WebSocket closed");
+        });
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, (m) => {
+                return {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;",
+                } [m];
+            });
+        }
+
+        function appendMessage({
+            from,
+            message,
+            timestamp,
+            profile_image
+        }) {
+            noMessages.classList.add("hidden");
+
+            const messageElement = document.createElement("div");
+            messageElement.className = `flex items ${from === CURRENT_USER_ID ? "justify-end" : "justify-start"} mb-3`;
+            messageElement.innerHTML = `
+                    <div class="max-w-xs px-4 py-2 rounded-lg text-white ${from === CURRENT_USER_ID ? "bg-blue-600" : "bg-gray-700"}">
+                        <div class="flex items-center gap-2 mb-1">
+                        ${
+                            from !== CURRENT_USER_ID
+                            ? 
+                            `<img src="${profile_image }" class="w-8 h-8 rounded-full">
+                            <p>${escapeHtml(message)}</p>`
+                            : 
+                            `<p>${escapeHtml(message)}</p>
+                            <img src="${profile_image}" class="w-8 h-8 rounded-full">`
+                        }
+                        </div>
+                        <div class="flex ${from === CURRENT_USER_ID ? "justify-end" : "justify-start"}">
+                        <span class="text-xs text-gray-400">${new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                        </div>
+                    </div>
+                `;
+
+            messagesList.appendChild(messageElement);
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+
+        friendButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                CURRENT_FRIEND_ID = parseInt(button.getAttribute("friend-id"));
+                sentToInput.value = CURRENT_FRIEND_ID;
+
+                conversationImage.src = button.querySelector("img").src;
+                conversationName.textContent = button.querySelector("span").textContent;
+
+                noConversation.classList.add("hidden");
+                messagesContainer.classList.remove("hidden");
+
+                messagesList.innerHTML = "";
+                noMessages.classList.remove("hidden");
+
+                loadOldMessages();
+            });
+        });
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const message = messageInput.value.trim();
+            if (!message || !CURRENT_FRIEND_ID) return;
+
+            const data = {
+                from: CURRENT_USER_ID,
+                to: CURRENT_FRIEND_ID,
+                message,
+                timestamp: new Date().toISOString(),
+                profile_image: CURRENT_USER_PROFILE_IMG,
+            };
+
+            socket.send(JSON.stringify(data));
+            appendMessage(data);
+
+            messageInput.value = "";
+        });
+
+        function loadOldMessages() {
+            const formData = new FormData();
+            formData.append("friend_id", CURRENT_FRIEND_ID);
+
+            fetch("/Instagram_Clone/src/api/getMessages.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.messages && data.messages.length > 0) {
+                        data.messages.forEach(msg => {
+                            appendMessage({
+                                from: msg.sentBy,
+                                message: msg.message,
+                                timestamp: msg.created_at,
+                                profile_image: msg.profile_image
+                            });
+                        });
+                        noMessages.classList.remove("hidden");
+                    } else {
+                        noMessages.classList.add("hidden");
+                    }
+                })
+                .catch(err => console.error("Error loading messages:", err));
+        }
+    </script>
 </body>
 
 </html>
