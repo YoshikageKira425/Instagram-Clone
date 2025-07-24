@@ -30,17 +30,21 @@ final class UserController
 
     public function getFollowerCount(int $id): int
     {
-        return count($this->userModel->getFollowedTo($id));
+        return count($this->getFollowedTo($id));
     }
 
     public function getFollowingCount(int $id): int
     {
-        return count($this->userModel->getFollowedBy($id));
+        return count($this->getFollowedBy($id));
     }
 
     public function getFollowedBy(int $id): array
     {
         return $this->userModel->getFollowedBy($id);
+    }
+    public function getFollowedTo(int $id): array
+    {
+        return $this->userModel->getFollowedTo($id);
     }
 
     public function updateAccountInfo(array $user, array $data): void
@@ -92,7 +96,7 @@ final class UserController
 
     public function searchUsers(string $query): array
     {
-        if (strlen($query) < 3) {
+        if (strlen($query) < 1) {
             return [];
         }
 

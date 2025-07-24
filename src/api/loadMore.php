@@ -30,4 +30,4 @@ if (empty($posts))
     exit;
 
 foreach ($posts as $post) 
-    include __DIR__ . '/../post.php'; 
+    include __DIR__ . '/../component/post.php'; 

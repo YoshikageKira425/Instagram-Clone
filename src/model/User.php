@@ -72,13 +72,18 @@ final class User
         return $this->db->select(
             "followers",
             ["[>]users" => ["followed_to" => "id"]],
-            ["users.id", "users.username", "users.profile_image"],
+            ["users.id", "users.username", "users.profile_image", "users.url"],
             ["followed_by" => $follow_by]
         ) ?? [];
     }
     public function getFollowedTo(int $follow_to): array
     {
-        return $this->db->select("followers", "*", ["followed_to" => $follow_to]) ?? [];
+        return $this->db->select(
+            "followers",
+            ["[>]users" => ["followed_by" => "id"]],
+            ["users.id", "users.username", "users.profile_image", "users.url"],
+            ["followed_to" => $follow_to]
+        ) ?? [];
     }
     public function isFollowedToSomeone(int $follow_by, int $follow_to): bool
     {

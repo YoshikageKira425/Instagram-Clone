@@ -71,10 +71,12 @@ final class Post
     {
         return $this->db->delete('posts', ['id' => $id])->rowCount();
     }
+
     public function getPostsByUserId(int $userId): array
     {
         return $this->db->select('posts', '*', ['user_id' => $userId]);
     }
+    
     public function getPost(int $id): array
     {
         return $this->db->get('posts', '*', ['id' => $id]);

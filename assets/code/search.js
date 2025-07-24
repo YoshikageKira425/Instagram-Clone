@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () =>{
                     noAccountsText.style.display = 'none';
                     data.users.forEach(user => {
                         const accountElement = document.createElement('a');
-                        accountElement.href = `/Instagram_Clone/account.php/${user.url}`;
+                        accountElement.href = `/Instagram_Clone/accounts.php/${user.url}`;
                         accountElement.className = 'flex justify-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition';
                         accountElement.innerHTML = `
                             <img src="${user.profile_image}" class="rounded-full w-8 h-8" alt="">
@@ -63,6 +63,14 @@ document.addEventListener('DOMContentLoaded', () =>{
             .catch(error => {
                 console.error('Search Error:', error);
             });
+        }
+        else
+        {
+            noPostsText.style.display = 'block';
+            noAccountsText.style.display = 'block';
+
+            resultAccuntContainer.innerHTML = '';
+            resultPostContainer.innerHTML = '';
         }
     });
 });
