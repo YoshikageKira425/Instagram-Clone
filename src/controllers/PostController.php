@@ -71,9 +71,9 @@ class PostController
         return $this->postModel->getSomePosts($limit, $offset);
     }
 
-    public function insertComment(int $user_id, int $post_id, string $content): void
+    public function insertComment(int $user_id, int $post_id, string $content): int
     {
-        $this->commentModel->addComment($user_id, $post_id, $content);
+        return $this->commentModel->addComment($user_id, $post_id, $content);
     }
 
     public function getComments(int $postId): array

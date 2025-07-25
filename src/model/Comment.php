@@ -20,7 +20,7 @@ final class Comment
         ]);
     }
 
-    public function addComment(int $userId, int $postId, string $commentText): void
+    public function addComment(int $userId, int $postId, string $commentText): int
     {
         $this->db->insert("comments", [
             "user_id" => $userId,
@@ -28,6 +28,7 @@ final class Comment
             "content" => $commentText,
             "created_at" => date("Y-m-d H:i:s")
         ]);
+        return (int)$this->db->id();
     }
 
     public function getComments(int $postId): array
@@ -35,8 +36,10 @@ final class Comment
         return $this->db->select("comments", [
             "[>]users" => ["user_id" => "id"]
         ], [
+            "comments.id",
             "comments.content",
             "users.username",
+            "users.email",
             "users.profile_image",
             "users.url"
         ], [

@@ -26,9 +26,10 @@ $id = (int)$_POST["id"];
 /** @var string $content */
 $content = $_POST["content"];
 
-$postController->insertComment($user["id"], $id, $content);
+/** @var int $commentId */
+$commentId = $postController->insertComment($user["id"], $id, $content);
 
-echo json_encode(["comment" => $content, "user" => [
+echo json_encode(["comment" => $content, "commentId" => $commentId, "user" => [
     "id" => $user["id"],
     "url" => $user["url"],
     "username" => $user["username"],

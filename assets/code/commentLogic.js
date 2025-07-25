@@ -24,16 +24,11 @@ export function commentLogic() {
       postButton.removeEventListener('click', postButton.postClickHandler);
     }
 
-    const postHandler = function(event) {
+    const postHandler = (event) => {
       event.preventDefault();
 
       const postId = postButton.getAttribute('post-id');
       const commentText = commentInput.value.trim();
-
-      if (!commentText || !postId) {
-        console.warn("Empty comment or missing post ID");
-        return;
-      }
 
       const formData = new FormData();
       formData.append('content', commentText);

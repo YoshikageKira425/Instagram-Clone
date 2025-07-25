@@ -48,6 +48,7 @@ class Messages
         return $this->db->select("messages", [
             "[>]users" => ["sentBy" => "id"]
         ], [
+            "messages.sentTo",
             "messages.sentBy",
             "messages.message",
             "messages.created_at",
@@ -55,19 +56,20 @@ class Messages
             "users.username",
             "users.profile_image"
         ], [
-            "AND" => [
-                "OR" => [
-                    "sentBy" => $userId,
-                    "sentTo" => $userId
+            "OR" => [
+                "AND #1" => [
+                    "messages.sentBy" => $userId,
+                    "messages.sentTo" => $friendId
                 ],
-                "OR" => [
-                    "sentBy" => $friendId,
-                    "sentTo" => $friendId
+                "AND #2" => [
+                    "messages.sentBy" => $friendId,
+                    "messages.sentTo" => $userId
                 ]
             ],
-            "ORDER" => ["created_at" => "ASC"]
+            "ORDER" => ["messages.created_at" => "ASC"]
         ]) ?? [];
     }
+
 
     public function sendMessage(int $sentById, int $sentToId, string $message): void
     {
