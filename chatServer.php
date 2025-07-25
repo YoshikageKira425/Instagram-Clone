@@ -44,16 +44,10 @@ class ChatServer implements MessageComponentInterface
             trim($data['message'])
         );
 
-        $recipientId = intval($data['to']);
+        $to = $data['to'];
 
-        if (isset($this->users[$recipientId])) {
-            $this->users[$recipientId]->send($msg);
-        }
-
-        foreach ($this->clients as $client) {
-            if ($client !== $from) {
-                $client->send($msg);
-            }
+        if (isset($this->users[$to])) {
+            $this->users[$to]->send($msg);
         }
 
         $from->send($msg);

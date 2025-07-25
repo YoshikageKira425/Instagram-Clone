@@ -23,7 +23,7 @@ test('login fails when the password is wrong', function () {
 });
 
 test('login was a success', function () {
-    (new AuthController)->logIn(["email" => "eneshalili425@gmail.com", "password" => "1234567"]);
+    (new AuthController)->logIn(["email" => "eneshalili425@gmail.com", "password" => "123456789"]);
 
     expect($_SESSION["error"])->toBeString()->toBe("");
 });
@@ -53,7 +53,7 @@ test('signup fails when the password and passwordConfirmation dont match', funct
 });
 
 test('signup is a success', function () {
-    (new AuthController)->signUp(["email" => "eneshalili@gmail.com", "password" => "1234567", "username" => "enes", "passwordConfirmation" => "123123123"]);
+    (new AuthController)->signUp(["email" => "eneshalili@gmail.com", "password" => "1234567", "username" => "enes", "passwordConfirmation" => "1234567"]);
     
     expect($_SESSION["error"])->toBeString()->toBe("");
     expect($_SESSION["id"])->toBeInt()->toBeNumeric()->toBeDigits();

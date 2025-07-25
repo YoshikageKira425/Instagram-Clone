@@ -31,6 +31,8 @@ class AuthController
             return;
         }
 
+        $_SESSION["error"] = "";
+
         $_SESSION["id"] = $user["id"];
         header("Location: index.php");
         exit;
@@ -57,6 +59,8 @@ class AuthController
             $_SESSION["error"] = "The passwords doesnt match.";
             return;
         }
+
+        $_SESSION["error"] = "";
 
         unset($data["passwordConfirmation"]);
         $passwordHash = password_hash($data["password"], PASSWORD_DEFAULT);

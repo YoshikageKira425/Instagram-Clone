@@ -33,8 +33,6 @@ class MessageController
 
     public function sendMessage(int $sentById, int $sentToId, string $message): void
     {
-        var_dump($sentById, $sentToId, $message);
-        exit;
         if (empty($message)) {
             return;
         }
@@ -49,5 +47,33 @@ class MessageController
     public function getConversationWith(int $userId, int $friendId): array
     {
         return $this->messagesModel->getMessages($userId, $friendId);
+    }
+
+    public function newMessage(int $userId, int $friendId): bool
+    {
+        $allMessage = $this->messagesModel->getAllMessages($userId);
+        $allMessage = array_filter($allMessage, function ($m) use ($friendId) {
+            return $m["sentBy"] === $friendId;
+        });
+        $allMessage = array_reverse($allMessage);
+        $message = array_pop($allMessage);
+
+        return isset($message) && $message["status"] === 'notseen';
+    }
+
+    public function newMessages(int $userId): bool
+    {
+        $allMessages = $this->messagesModel->getAllMessages($userId);
+        $allMessages = array_filter($allMessages, function ($m) use ($userId) {
+            return $m["sentTo"] === $userId;
+        });
+
+        foreach ($allMessages as $message) {
+            if ($message['status'] === 'notseen') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -90,6 +90,6 @@ class Messages
 
     public function updateMessageStatus(int $id, string $status): void
     {
-        $this->db->update("messages", ["status" => $status], ["id" => $id]);
+        $this->db->update("messages", ["status" => $status], ["sentTo" => $id]);
     }
 }

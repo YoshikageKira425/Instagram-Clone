@@ -52,9 +52,7 @@ $friends = array_values($uniqueFriends);
         <div class="flex flex-row">
             <div class="flex flex-col">
                 <div class="px-4 pt-5">
-                    <a href="/">
-                        <img class="w-auto h-8" src="./assets/images/icon.png" alt="">
-                    </a>
+                    <img class="w-auto h-8 ml-1" src="./assets/images/icon.png" alt="">
                 </div>
 
                 <ul class="space-y-2 px-2">
@@ -76,11 +74,14 @@ $friends = array_values($uniqueFriends);
                         </a>
                     </li>
                     <li>
-                        <a href="/Instagram_Clone/messages.php" class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
+                        <a href="/Instagram_Clone/messages.php" class="relative flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
                             <svg aria-label="Direct" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
                                 <title>Direct</title>
                                 <path d="M22.91 2.388a.69.69 0 0 0-.597-.347l-20.625.002a.687.687 0 0 0-.482 1.178L7.26 9.16a.686.686 0 0 0 .778.128l7.612-3.657a.723.723 0 0 1 .937.248.688.688 0 0 1-.225.932l-7.144 4.52a.69.69 0 0 0-.3.743l2.102 8.692a.687.687 0 0 0 .566.518.655.655 0 0 0 .103.008.686.686 0 0 0 .59-.337L22.903 3.08a.688.688 0 0 0 .007-.692" fill-rule="evenodd"></path>
                             </svg>
+                            <?php if ($messageController->newMessages($user['id'])): ?>
+                                <span class="absolute bottom-4 left-9 block h-2 w-2 rounded-full bg-red-500"></span>
+                            <?php endif; ?>
                         </a>
                     </li>
                     <li>
@@ -118,8 +119,9 @@ $friends = array_values($uniqueFriends);
                     <?php foreach ($friends as $friend): ?>
                         <button friend-id="<?= $friend["id"] ?>" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-neutral-800 transition">
                             <img src="<?= $friend["profile_image"] ?>" alt="<?= $friend["username"] ?>" class="w-8 h-8 rounded-full">
-                            <div>
-                                <span><?= $friend["username"] ?></span>
+                            <div class="flex jutify-left flex-col">
+                                <span class="text-left"><?= $friend["username"] ?></span>
+                                <p class="text-xs text-neutral-500 <?= $messageController->newMessage($user["id"], $friend["id"]) ? '' : 'hidden' ?>" id="new-message">New Message</p>
                             </div>
                         </button>
                     <?php endforeach; ?>
@@ -178,13 +180,12 @@ $friends = array_values($uniqueFriends);
         const form = document.getElementById("messageForm");
         const messageInput = document.getElementById("message");
         const sentToInput = document.getElementById("sentToId");
+        const newMessage = document.getElementById("new-message");
 
         const socket = new WebSocket("ws://localhost:8090");
 
         socket.addEventListener("message", (event) => {
             const data = JSON.parse(event.data);
-
-            console.log("Received message:", data);
 
             if (data.from !== CURRENT_USER_ID && (
                     (data.from === CURRENT_FRIEND_ID && data.to === CURRENT_USER_ID) ||
@@ -192,6 +193,9 @@ $friends = array_values($uniqueFriends);
                 )) {
                 appendMessage(data);
             }
+
+            if (data.to === CURRENT_USER_ID && CURRENT_FRIEND_ID !== data.from)
+                newMessage.classList.remove("hidden");
         });
 
         socket.addEventListener("open", () => {
@@ -254,6 +258,8 @@ $friends = array_values($uniqueFriends);
 
         friendButtons.forEach((button) => {
             button.addEventListener("click", () => {
+                newMessage.classList.add("hidden");
+
                 CURRENT_FRIEND_ID = parseInt(button.getAttribute("friend-id"));
                 sentToInput.value = CURRENT_FRIEND_ID;
 
