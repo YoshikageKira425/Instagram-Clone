@@ -13,10 +13,12 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) 
+    (new AuthController)->logOut();
 
 /** @var PostController $postController */
 $postController = new PostController();
+
 /** @var UserController $userController */
 $userController = new UserController();
 
@@ -25,8 +27,10 @@ $messageController = new MessageController();
 
 /** @var array $urlUser */
 $urlUser = GetUserUrl(GetTheUrlValue());
+
 /** @var array $post */
 $post = $postController->getPosts($urlUser["id"]);
+
 /** @var int $postCount */
 $postCount = count($post);
 
@@ -42,7 +46,7 @@ if ($urlUser["id"] === $user["id"]) {
     if (!empty($whatTypeOfPosts)) {
         if ($whatTypeOfPosts === "likes")
             $post = $postController->getLikedPosts($user["id"]);
-        elseif ($whatTypeOfPosts === "saved")
+        else if ($whatTypeOfPosts === "saved")
             $post = $postController->getSavedPosts($user["id"]);
         else if ($whatTypeOfPosts === "followers")
             $accounts = $userController->getFollowedTo($urlUser["id"]);
@@ -177,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
         </div>
     </div>
 
-    <?php if (!empty(GetTheUrlValue(3))): ?>
+    <?php if (!empty(GetTheUrlValue(3)) && (GetTheUrlValue(3) === "followers" || GetTheUrlValue(3) === "following")): ?>
         <div class="fixed z-30 top-0 w-full h-screen bg-[rgba(0,0,0,0.8)] flex justify-center items-center" onclick="history.back()">
             <div class="w-130 h-80 bg-neutral-800 rounded-3xl text-white">
                 <h1 class="text-center text-lg font-semibold mb-3 mt-2"><?= ucfirst(GetTheUrlValue(3)) ?></h1>

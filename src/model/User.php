@@ -102,4 +102,28 @@ final class User
     {
         return $this->db->get('users', '*', ['id' => $id]) ?? [];
     }
+
+    public function getAllUsersForAdmin(): array
+    {
+        return $this->db->select(
+            "users",
+            [
+                "[>]followers" => ["users.id" => "followed_to"],
+                "[>]posts" => ["users.id" => "user_id"]
+            ],
+            [
+                "users.id",
+                "users.username",
+                "users.email",
+                "users.role",
+                "users.profile_image",
+                "users.url",
+                "followers_count" => Medoo::raw("COUNT(DISTINCT followers.id)"),
+                "posts_count" => Medoo::raw("COUNT(DISTINCT posts.id)")
+            ],
+            [
+                "GROUP" => "users.id"
+            ]
+        ) ?? [];
+    }
 }

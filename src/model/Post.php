@@ -76,9 +76,34 @@ final class Post
     {
         return $this->db->select('posts', '*', ['user_id' => $userId]);
     }
-    
+
     public function getPost(int $id): array
     {
         return $this->db->get('posts', '*', ['id' => $id]);
+    }
+
+    public function getAllPostsForAdmin(): array
+    {
+        return $this->db->select(
+            "posts",
+            [
+                "[>]users" => ["user_id" => "id"],
+                "[>]likes" => ["posts.id" => "post_id"],
+                "[>]saved" => ["posts.id" => "post_id"],
+            ],
+            [
+                "posts.id",
+                "posts.content",
+                "posts.image",
+                "users.username",
+                "users.profile_image",
+                "users.url",
+                "likes_count" => Medoo::raw("COUNT(DISTINCT likes.id)"),
+                "saves_count" => Medoo::raw("COUNT(DISTINCT saved.id)")
+            ],
+            [
+                "GROUP" => "posts.id"
+            ]
+        ) ?? [];
     }
 }

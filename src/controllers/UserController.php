@@ -94,6 +94,11 @@ final class UserController
         return $this->userModel->findById($id);
     }
 
+    public function getAllUsers(): array
+    {
+        return $this->userModel->getAllUsersForAdmin();
+    }
+
     public function searchUsers(string $query): array
     {
         if (strlen($query) < 1) {

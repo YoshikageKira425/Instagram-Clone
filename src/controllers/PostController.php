@@ -162,4 +162,9 @@ class PostController
 
         return $posts[0];
     }
+
+    public function getAllPostsForAdmin(): array
+    {
+        return $this->postModel->getAllPostsForAdmin();        
+    }
 }
