@@ -13,8 +13,7 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) 
-    (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
 
 /** @var PostController $postController */
 $postController = new PostController();
@@ -48,28 +47,14 @@ if ($urlUser["id"] === $user["id"]) {
             $post = $postController->getLikedPosts($user["id"]);
         else if ($whatTypeOfPosts === "saved")
             $post = $postController->getSavedPosts($user["id"]);
-        else if ($whatTypeOfPosts === "followers")
-            $accounts = $userController->getFollowedTo($urlUser["id"]);
-        else if ($whatTypeOfPosts === "following")
-            $accounts = $userController->getFollowedBy($urlUser["id"]);
         else {
             header("Location: /Instagram_Clone/notFound.php");
             exit;
         }
     }
 } else {
-    $urlLink = GetTheUrlValue(3);
-
-    if (!empty($urlLink)) {
-        if ($urlLink === "followers")
-            $accounts = $userController->getFollowedTo($urlUser["id"]);
-        else if ($urlLink === "following")
-            $accounts = $userController->getFollowedBy($urlUser["id"]);
-        else {
-            header("Location: /Instagram_Clone/notFound.php");
-            exit;
-        }
-    }
+    header("Location: /Instagram_Clone/notFound.php");
+    exit;
 }
 
 /** @var bool @isFollowedToSomeone */
@@ -122,8 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
                     </div>
                     <div class="flex space-x-14">
                         <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $postCount ?></b> posts</p>
-                        <a href="/Instagram_Clone/accounts.php/<?= $urlUser["url"] ?>/followers" class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowerCount($urlUser["id"]) ?></b> followers</a>
-                        <a href="/Instagram_Clone/accounts.php/<?= $urlUser["url"] ?>/following" class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowingCount($urlUser["id"]) ?></b> following</a>
+                        <button onclick='openOverlay("followers", <?= $urlUser["id"] ?>)' class="cursor-pointer text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowerCount($urlUser["id"]) ?></b> followers</button>
+                        <button onclick='openOverlay("following", <?= $urlUser["id"] ?>)' class="cursor-pointer text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowingCount($urlUser["id"]) ?></b> following</button>
                     </div>
                 </div>
             </div>
@@ -181,25 +166,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
         </div>
     </div>
 
-    <?php if (!empty(GetTheUrlValue(3)) && (GetTheUrlValue(3) === "followers" || GetTheUrlValue(3) === "following")): ?>
-        <div class="fixed z-30 top-0 w-full h-screen bg-[rgba(0,0,0,0.8)] flex justify-center items-center" onclick="history.back()">
-            <div class="w-130 h-80 bg-neutral-800 rounded-3xl text-white">
-                <h1 class="text-center text-lg font-semibold mb-3 mt-2"><?= ucfirst(GetTheUrlValue(3)) ?></h1>
-                <hr class="text-neutral-600">
-                <div class="flex flex-row overflow-hidden group gap-4">
-                    <?php if (!empty($accounts)): ?>
-                        <?php foreach ($accounts as $a): ?>
-                            <a href="/Instagram_Clone/accounts.php/<?= $a["url"] ?>" class="m-2 flex w-full justify-left gap-4 px-4 py-3 rounded-xl hover:bg-neutral-900 transition">
-                                <img src="<?= $a["profile_image"] ?>" class="rounded-full w-8 h-8" alt="">
-                                <p class="text-white text-xl font-bold"><?= $a["username"] ?></p>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
+    <div id="overlay" class="fixed z-30 top-0 w-full h-screen bg-[rgba(0,0,0,0.8)] flex justify-center items-center hidden" onclick="closeOverlay()">
+        <div class="w-130 h-80 bg-neutral-800 rounded-3xl text-white">
+            <h1 class="text-center text-lg font-semibold mb-3 mt-2" id="text"></h1>
+            <hr class="text-neutral-600">
+
+            <div class="flex flex-col overflow-hidden group" id="container">
             </div>
         </div>
-    <?php endif; ?>
+    </div>
 
+    <script src="/Instagram_Clone/assets/code/accounts.js"></script>
 </body>
 
 </html>

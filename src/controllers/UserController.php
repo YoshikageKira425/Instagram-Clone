@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . "/../model/User.php";
@@ -18,14 +19,20 @@ final class UserController
             $this->userModel->followSomeone($follow_by, $follow_to);
         else if ($action === "unfollowed")
             $this->userModel->unFollowSomeone($follow_by, $follow_to);
-
-        header("Location: " . $_SERVER['REQUEST_URI']);
-        exit;
     }
 
     public function isFollowedToSomeone(int $follow_by, int $follow_to): bool
     {
         return $this->userModel->isFollowedToSomeone($follow_by, $follow_to);
+    }
+
+    public function attachFollowStatus(array $users, int $currentUserId): array
+    {
+        foreach ($users as &$user) {
+            $user["is_followed"] = $this->userModel->isFollowedToSomeone($currentUserId, $user["id"]);
+        }
+
+        return $users;
     }
 
     public function getFollowerCount(int $id): int
@@ -61,7 +68,7 @@ final class UserController
             return;
         }
 
-        if (strlen($data["newPassword"]) < 6){
+        if (strlen($data["newPassword"]) < 6) {
             $_SESSION["security_error"] = "The new password is too short.";
             return;
         }
