@@ -100,6 +100,26 @@ final class Post
         return $this->db->get('posts', '*', ['id' => $id]);
     }
 
+    public function getAllPosts(): array
+    {
+        return $this->db->select(
+            "posts",
+            [
+                "[>]users" => ["user_id" => "id"]
+            ],
+            [
+                "posts.id",
+                "posts.user_id",
+                "posts.content",
+                "posts.image",
+            ],
+            [
+                "users.status" => "Active",
+                "GROUP" => "posts.id"
+            ]
+        ) ?? [];
+    }
+
     public function getAllPostsForAdmin(): array
     {
         return $this->db->select(

@@ -103,6 +103,11 @@ class PostController
         return $this->GetLikesCount($postId);
     }
 
+    public function getPostCount(): int
+    {
+        return count($this->postModel->getAllPosts());
+    }
+
     public function GetLikesCount(int $postId): int
     {
         $likes = $this->likeSaveModel->getLikes($postId);

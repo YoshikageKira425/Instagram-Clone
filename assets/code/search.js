@@ -9,9 +9,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
 
-        if (query.length > 0) {
-            console.log('Search query:', query);
-
+        if (query.length !== 0) {
             const formData = new FormData();
             formData.append('query', query);
 
@@ -21,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () =>{
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Search Results:', data);
                 resultAccuntContainer.innerHTML = '';
                 resultPostContainer.innerHTML = '';
 
@@ -66,9 +63,8 @@ document.addEventListener('DOMContentLoaded', () =>{
         }
         else
         {
-            noPostsText.style.display = 'block';
-            noAccountsText.style.display = 'block';
-
+            noPostsText.style.display = 'none';
+            noAccountsText.style.display = 'none';
             resultAccuntContainer.innerHTML = '';
             resultPostContainer.innerHTML = '';
         }

@@ -30,6 +30,8 @@ $messageController = new MessageController();
 /** @var array $posts */
 $posts = $postController->getSomePosts(4);
 
+$postCount = $postController->getPostCount()
+
 ?>
 
 <!DOCTYPE html>
@@ -139,7 +141,7 @@ $posts = $postController->getSomePosts(4);
         <div class="flex justify-center mb-10 mt-3" id="pagination">
             <button class="cursor-pointer page-btn px-4 py-2 mx-1 text-neutral-500 bg-white rounded-md dark:bg-neutral-800 dark:text-neutral-200" data-page="prev">Previous</button>
 
-            <?php for ($i = 1; $i <= 5; $i++): ?>
+            <?php for ($i = 1; $i <= ceil($postCount / 5); $i++): ?>
                 <button class="cursor-pointer page-btn px-4 py-2 mx-1 text-neutral-200 bg-neutral-800 rounded-md hover:bg-blue-500 hover:text-white" data-page="<?= $i ?>">
                     <?= $i ?>
                 </button>

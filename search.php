@@ -11,13 +11,12 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) 
-    (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
 
 /** @var array $user */
 $user = GetCurrentUser();
 
-if ($user["status"] == "Ban"){
+if ($user["status"] == "Ban") {
     header("Location: /Instagram_Clone/banUser.php");
     exit;
 }
@@ -50,22 +49,52 @@ $messageController = new MessageController();
                     </svg>
                 </span>
 
-                <input id="search" type="text" class="w-full py-2 pl-10 pr-4 text-neutral-700 bg-white border rounded-lg dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300" placeholder="Search">
+                <div class="flex">
+                    <input id="search" type="text" class="w-full py-2 pl-10 pr-4 text-neutral-700 bg-white border rounded-lg dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300" placeholder="Search">
+
+                    <select id="filterSelect" class="px-2 py-1 text-white border border-gray-300 rounded">
+                        <option class="bg-black" value="all">All</option>
+                        <option class="bg-black" value="users">Users</option>
+                        <option class="bg-black" value="posts">Posts</option>
+                    </select>
+                </div>
             </div>
 
             <div class="w-[60%]">
-                <h1 class="text-2xl text-center font-semibold text-white" id="no-accounts">No accounts found</h1>
-                <div class="grid grid-cols-3 gap-4 border-neutral-600 border-b pb-2 mb-4" id="result-account">
+                <div id="account">
+                    <h1 class="text-2xl text-center font-semibold text-white" id="no-accounts">No accounts found</h1>
+                    <div class="grid grid-cols-3 gap-4 border-neutral-600 border-b pb-2 mb-4" id="result-account">
+                    </div>
                 </div>
-                <h1 class="text-2xl text-center font-semibold text-white" id="no-posts">No posts found</h1>
-                <div class="grid grid-cols-3 gap-2 p-4 border-neutral-600 border-b pb-2 mb-4" id="result-post">
+                <div id="post">
+                    <h1 class="text-2xl text-center font-semibold text-white" id="no-posts">No posts found</h1>
+                    <div class="grid grid-cols-3 gap-2 p-4 border-neutral-600 border-b pb-2 mb-4" id="result-post">
 
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="/Instagram_Clone/assets/code/search.js"></script>
+    <script>
+        document.getElementById("filterSelect").addEventListener("change", function() {
+            const value = this.value;
+            const userResults = document.getElementById('account');
+            const postResults = document.getElementById('post');
+
+            if (value === "all") {
+                userResults.style.display = "block";
+                postResults.style.display = "block";
+            } else if (value === "users") {
+                userResults.style.display = "block";
+                postResults.style.display = "none";
+            } else if (value === "posts") {
+                userResults.style.display = "none";
+                postResults.style.display = "block";
+            }
+        });
+    </script>
 </body>
 
 </html>
