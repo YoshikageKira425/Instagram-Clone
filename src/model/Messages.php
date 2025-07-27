@@ -39,6 +39,7 @@ class Messages
                 "sentBy" => $userId,
                 "sentTo" => $userId
             ],
+            "users.status" => "Active",
             "ORDER" => ["created_at" => "DESC"]
         ]) ?? [];
     }
@@ -66,6 +67,7 @@ class Messages
                     "messages.sentTo" => $userId
                 ]
             ],
+            "users.status" => "Active",
             "ORDER" => ["messages.created_at" => "ASC"]
         ]) ?? [];
     }

@@ -55,7 +55,8 @@ final class User
             'OR' => [
                 'username[~]' => $query,
                 'url[~]' => $query
-            ]
+            ], 
+            "users.status" => "Active"
         ]);
     }
 
@@ -73,7 +74,7 @@ final class User
             "followers",
             ["[>]users" => ["followed_to" => "id"]],
             ["users.id", "users.username", "users.profile_image", "users.url"],
-            ["followed_by" => $follow_by]
+            ["followed_by" => $follow_by, "users.status" => "Active"]
         ) ?? [];
     }
     public function getFollowedTo(int $follow_to): array
@@ -82,7 +83,7 @@ final class User
             "followers",
             ["[>]users" => ["followed_by" => "id"]],
             ["users.id", "users.username", "users.profile_image", "users.url"],
-            ["followed_to" => $follow_to]
+            ["followers.followed_to" => $follow_to, "users.status" => "Active"]
         ) ?? [];
     }
     public function isFollowedToSomeone(int $follow_by, int $follow_to): bool
@@ -118,6 +119,7 @@ final class User
                 "users.role",
                 "users.profile_image",
                 "users.url",
+                "users.status",
                 "followers_count" => Medoo::raw("COUNT(DISTINCT followers.id)"),
                 "posts_count" => Medoo::raw("COUNT(DISTINCT posts.id)")
             ],
@@ -125,5 +127,25 @@ final class User
                 "GROUP" => "users.id"
             ]
         ) ?? [];
+    }
+
+    public function banUser(int $id): void
+    {
+        $this->db->update("users", ["status" => "Ban"], ["id" => $id]);
+    }
+
+    public function userUnban(int $id): void
+    {
+        $this->db->update("users", ["status" => "Active"], ["id" => $id]);
+    }
+
+    public function getBanUser(): array
+    {
+        return $this->db->select("users", "*", ["status" => "Ban"]);
+    }
+
+    public function getActiveUser(): array
+    {
+        return $this->db->select("users", "*", ["status" => "Active"]);
     }
 }

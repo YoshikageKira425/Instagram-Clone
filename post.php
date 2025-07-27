@@ -11,7 +11,16 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) 
+    (new AuthController)->logOut();
+
+/** @var array $user */
+$user = GetCurrentUser();
+
+if ($user["status"] == "Ban"){
+    header("Location: /Instagram_Clone/banUser.php");
+    exit;
+}
 
 /** @var PostController $postController */
 $postController = new PostController();
@@ -23,11 +32,14 @@ $comments = $postController->getComments($post["id"]);
 /** @var array $postUser */
 $postUser = $postController->getUserPosts($post["user_id"]);
 
-/** @var array $user */
-$user = GetCurrentUser();
-
 if (!empty($_POST) && isset($_POST["comment"]))
     $postController->insertComment($user["id"], $post["id"], $_POST["comment"]);
+
+if ($postUser["status"] == "Ban")
+{
+    header("Location: /Instagram_Clone/notFound.php");
+    exit;
+}
 
 ?>
 

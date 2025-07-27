@@ -13,7 +13,16 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) 
+    (new AuthController)->logOut();
+
+/** @var array $user */
+$user = GetCurrentUser();
+
+if ($user["status"] == "Ban"){
+    header("Location: /Instagram_Clone/banUser.php");
+    exit;
+}
 
 /** @var PostController $postController */
 $postController = new PostController();
@@ -33,9 +42,6 @@ $post = $postController->getPosts($urlUser["id"]);
 /** @var int $postCount */
 $postCount = count($post);
 
-/** @var array $user */
-$user = GetCurrentUser();
-
 /** @var array $accounts */
 $accounts = [];
 
@@ -53,6 +59,12 @@ if ($urlUser["id"] === $user["id"]) {
         }
     }
 } else {
+    header("Location: /Instagram_Clone/notFound.php");
+    exit;
+}
+
+if ($urlUser["status"] == "Ban")
+{
     header("Location: /Instagram_Clone/notFound.php");
     exit;
 }

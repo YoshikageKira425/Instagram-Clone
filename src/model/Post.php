@@ -54,6 +54,7 @@ final class Post
             "posts.content",
             "posts.image"
         ], [
+            "users.status" => "Active",
             'OR' => [
                 'posts.content[~]' => $query,
                 'users.username[~]' => $query
@@ -64,7 +65,24 @@ final class Post
 
     public function getSomePosts(int $limit, $offset): array
     {
-        return $this->db->select('posts', ["[>]users" => ["user_id" => "id"]], ["posts.id", "users.username", "users.url", "users.profile_image", "posts.content", "posts.image"], ['ORDER' => ['created_at' => 'DESC'], 'LIMIT' => [$offset, $limit]]) ?? [];
+        return $this->db->select(
+            'posts', 
+            [
+                "[>]users" => ["user_id" => "id"]
+            ], 
+            [
+                "posts.id", 
+                "users.username", 
+                "users.url", 
+                "users.profile_image", 
+                "posts.content", 
+                "posts.image"
+            ], 
+            [ 
+                "users.status" => "Active",
+                'ORDER' => ['created_at' => 'DESC'], 
+                'LIMIT' => [$offset, $limit]
+            ]) ?? [];
     }
 
     public function deletePost(int $id): int
@@ -97,6 +115,7 @@ final class Post
                 "posts.image",
                 "users.username",
                 "users.profile_image",
+                "users.status",
                 "users.url",
                 "likes_count" => Medoo::raw("COUNT(DISTINCT likes.id)"),
                 "saves_count" => Medoo::raw("COUNT(DISTINCT saved.id)")

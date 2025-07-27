@@ -12,10 +12,16 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) 
+    (new AuthController)->logOut();
 
 /** @var array $user */
 $user = GetCurrentUser();
+
+if ($user["status"] == "Ban"){
+    header("Location: /Instagram_Clone/banUser.php");
+    exit;
+}
 
 /** @var UserController $userController */
 $userController = new UserController();

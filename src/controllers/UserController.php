@@ -54,6 +54,16 @@ final class UserController
         return $this->userModel->getFollowedTo($id);
     }
 
+    public function userBan(int $id): void
+    {
+        $this->userModel->banUser($id);
+    }
+
+    public function userUnban(int $id): void
+    {
+        $this->userModel->userUnban($id);
+    }
+
     public function updateAccountInfo(array $user, array $data): void
     {
         $user["username"] = $data["username"];
@@ -122,5 +132,15 @@ final class UserController
         session_destroy();
         header("Location: /Instagram_Clone/signUp.php");
         exit;
+    }
+
+    public function banCount(): int
+    {
+        return count($this->userModel->getBanUser());
+    }
+
+    public function activeCount(): int
+    {
+        return count($this->userModel->getActiveUser());
     }
 }
