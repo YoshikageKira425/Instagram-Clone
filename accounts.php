@@ -119,8 +119,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
                     </div>
                     <div class="flex space-x-14">
                         <p class="text-base font-semibold text-neutral-400"><b class="text-white"><?= $postCount ?></b> posts</p>
-                        <button onclick='openOverlay("followers", <?= $urlUser["id"] ?>)' class="cursor-pointer text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowerCount($urlUser["id"]) ?></b> followers</button>
-                        <button onclick='openOverlay("following", <?= $urlUser["id"] ?>)' class="cursor-pointer text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowingCount($urlUser["id"]) ?></b> following</button>
+                        <button onclick='openOverlay("followers", <?= $urlUser["id"] ?>, <?= $user["id"] ?>)' class="cursor-pointer text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowerCount($urlUser["id"]) ?></b> followers</button>
+                        <button onclick='openOverlay("following", <?= $urlUser["id"] ?>, <?= $user["id"] ?>)' class="cursor-pointer text-base font-semibold text-neutral-400"><b class="text-white"><?= $userController->getFollowingCount($urlUser["id"]) ?></b> following</button>
                     </div>
                 </div>
             </div>
@@ -179,11 +179,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["follow_action"]))
     </div>
 
     <div id="overlay" class="fixed z-30 top-0 w-full h-screen bg-[rgba(0,0,0,0.8)] flex justify-center items-center hidden" onclick="closeOverlay()">
-        <div class="w-130 h-80 bg-neutral-800 rounded-3xl text-white">
+        <div class="w-[32rem] max-h-[80vh] bg-neutral-800 rounded-3xl text-white p-4 overflow-hidden" onclick="event.stopPropagation()">
             <h1 class="text-center text-lg font-semibold mb-3 mt-2" id="text"></h1>
-            <hr class="text-neutral-600">
+            <hr class="border-neutral-600 mb-3">
 
-            <div class="flex flex-col overflow-hidden group" id="container">
+            <div id="container" class="overflow-y-auto overflow-x-hidden max-h-[60vh] pr-2">
             </div>
         </div>
     </div>
