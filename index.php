@@ -12,13 +12,12 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"])) 
-    (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
 
 /** @var array $user */
 $user = GetCurrentUser();
 
-if ($user["status"] == "Ban"){
+if ($user["status"] == "Ban") {
     header("Location: /Instagram_Clone/banUser.php");
     exit;
 }
@@ -47,11 +46,11 @@ $posts = $postController->getSomePosts(4);
 <body class="bg-black">
     <?php include __DIR__ . "/src/componet/navBar.php"; ?>
 
-    <div class="min-h-screen flex justify-center gap-4">
+    <div class="min-h-screen flex justify-center flex-col gap-4">
         <div class="flex flex-col mt-10" id="posts-container">
             <?php foreach ($posts as $post): ?>
                 <div class="flex justify-center items-center gap-4 postContainer">
-                    <div class="max-w-md text-white border border-gray-800 rounded-lg shadow mb-6">
+                    <div class="max-w-md text-white border border-neutral-800 rounded-lg shadow mb-6">
                         <div class="flex items-center justify-between px-4 py-3">
                             <a href="/Instagram_Clone/accounts.php/<?= $post["url"] ?>" class="flex items-center space-x-3">
                                 <img src="<?= $post["profile_image"] ?>" alt="User" class="w-10 h-10 rounded-full object-cover">
@@ -110,7 +109,7 @@ $posts = $postController->getSomePosts(4);
                         </div>
                     </div>
                     <div class="w-80 bg-neutral-700 text-white rounded-lg shadow flex flex-col h-[500px] hidden commentsSection">
-                        <div class="px-4 py-3 border-b border-gray-600 font-semibold">Comments</div>
+                        <div class="px-4 py-3 border-b border-neutral-600 font-semibold">Comments</div>
                         <div class="flex-grow overflow-y-auto px-4 py-3 space-y-3 commentsList">
                             <?php $comments = $postController->getComments($post["id"]);
                             if (!empty($comments)): ?>
@@ -136,10 +135,22 @@ $posts = $postController->getSomePosts(4);
                 </div>
             <?php endforeach; ?>
         </div>
+
+        <div class="flex justify-center mb-10 mt-3" id="pagination">
+            <button class="cursor-pointer page-btn px-4 py-2 mx-1 text-neutral-500 bg-white rounded-md dark:bg-neutral-800 dark:text-neutral-200" data-page="prev">Previous</button>
+
+            <?php for ($i = 1; $i <= 5; $i++): ?>
+                <button class="cursor-pointer page-btn px-4 py-2 mx-1 text-neutral-200 bg-neutral-800 rounded-md hover:bg-blue-500 hover:text-white" data-page="<?= $i ?>">
+                    <?= $i ?>
+                </button>
+            <?php endfor; ?>
+
+            <button class="cursor-pointer page-btn px-4 py-2 mx-1 text-neutral-700 bg-white rounded-md dark:bg-neutral-800 dark:text-neutral-200 hover:bg-blue-500 hover:text-white" data-page="next">Next</button>
+        </div>
     </div>
 
 
-    <script src="/Instagram_Clone/assets/code/infiniteScrollForHome.js"></script>
+    <script src="/Instagram_Clone/assets/code/home.js"></script>
     <script type="module">
         import {
             saveLogic
