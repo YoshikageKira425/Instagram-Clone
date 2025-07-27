@@ -31,6 +31,7 @@ final class User
         $this->db->insert('users', $data);
         return (int)$this->db->id();
     }
+
     public function updatedUser(int $id, array $data, array $file = []): void
     {
         if (!empty($file)) {
@@ -40,10 +41,12 @@ final class User
 
         $this->db->update('users', $data, ['id' => $id])->rowCount();
     }
+
     public function deleteUser(int $id): int
     {
         return $this->db->delete('users', ['id' => $id])->rowCount();
     }
+    
     public function searchUsers(string $query): array
     {
         return $this->db->select('users', [
@@ -52,10 +55,7 @@ final class User
             "url",
             "profile_image"
         ], [
-            'OR' => [
-                'username[~]' => $query,
-                'url[~]' => $query
-            ], 
+            'username[~]' => $query,
             "users.status" => "Active"
         ]);
     }

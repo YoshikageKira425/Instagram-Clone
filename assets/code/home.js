@@ -2,6 +2,7 @@ let currentPage = 1;
 const limit = 5;
 const container = document.getElementById("posts-container");
 const pagination = document.getElementById("pagination");
+const pageBtns = document.querySelectorAll(".page-btn");
 updatePaginationUI();
 
 function loadPage(page) {
@@ -27,7 +28,7 @@ function loadPage(page) {
 }
 
 function updatePaginationUI() {
-    document.querySelectorAll(".page-btn").forEach(btn => {
+    pageBtns.forEach(btn => {
         const page = btn.getAttribute("data-page");
         if (parseInt(page) === currentPage) {
             btn.classList.add("bg-blue-500", "text-white");
@@ -45,9 +46,11 @@ pagination.addEventListener("click", (e) => {
     const value = e.target.getAttribute("data-page");
 
     if (value === "next") {
-        loadPage(currentPage + 1);
+        if (currentPage < pageBtns.length - 2) 
+            loadPage(currentPage + 1);
     } else if (value === "prev") {
-        if (currentPage > 1) loadPage(currentPage - 1);
+        if (currentPage > 1) 
+            loadPage(currentPage - 1);
     } else {
         const page = parseInt(value);
         if (!isNaN(page)) loadPage(page);

@@ -13,7 +13,7 @@ $isSaved = $postController->isSaved($post["id"]);
         </div>
 
         <a href="/Instagram_Clone/post.php/<?= $post["id"] ?>">
-            <img src="<?= $post["image"] ?>" alt="Post Image" class="w-full object-cover max-h-[500px]">
+            <img src="<?= $post["image"] ?>" alt="Post Image" class="w-full object-cover max-h-[700px]">
         </a>
 
         <div class="px-4 py-3">

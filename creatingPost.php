@@ -12,13 +12,12 @@ if (empty($_SESSION) || empty($_SESSION["id"])) {
     exit;
 }
 
-if (!empty($_POST) && !empty($_POST["logout"]))
-    (new AuthController)->logOut();
+if (!empty($_POST) && !empty($_POST["logout"])) (new AuthController)->logOut();
 
 /** @var array $user */
 $user = GetCurrentUser();
 
-if ($user["status"] == "Ban"){
+if ($user["status"] == "Ban") {
     header("Location: /Instagram_Clone/banUser.php");
     exit;
 }
@@ -27,8 +26,7 @@ if ($user["status"] == "Ban"){
 $messageController = new MessageController();
 
 $_SESSION["error"] = "";
-if (!empty($_POST) && !empty($_POST["content"]) && !empty($_FILES)) 
-    (new PostController)->insertNewPost($_POST, $_FILES);
+if (!empty($_POST) && !empty($_POST["content"]) && !empty($_FILES)) (new PostController)->insertNewPost($_POST, $_FILES);
 
 ?>
 
@@ -65,8 +63,13 @@ if (!empty($_POST) && !empty($_POST["content"]) && !empty($_FILES))
 
                         <p class="mt-2 text-xs tracking-wide text-neutral-500 dark:text-neutral-400">Upload or darg & drop your file SVG, PNG or JPG. </p>
 
-                        <input name="file" id="dropzone-file" type="file" class="hidden" />
+                        <input name="file" id="dropzone-file" type="file" class="text-center text-neutral-400" />
                     </label>
+                </div>
+
+                <div id="image-preview" class="mt-4 hidden">
+                    <p class="text-sm text-neutral-400 mb-2">Image Preview:</p>
+                    <img id="preview-img" src="" alt="Preview" class="max-w-full h-auto rounded-xl border border-neutral-700" />
                 </div>
 
                 <div class="text-center flex flex-col mt-10">
@@ -82,6 +85,30 @@ if (!empty($_POST) && !empty($_POST["content"]) && !empty($_FILES))
         </form>
     </div>
 
+    <script>
+        const fileInput = document.getElementById("dropzone-file");
+        const previewContainer = document.getElementById("image-preview");
+        const previewImage = document.getElementById("preview-img");
+
+        fileInput.addEventListener("change", function() {
+            const file = this.files[0];
+
+            if (!file) {
+                previewContainer.classList.add("hidden");
+                previewImage.src = "";
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.classList.remove("hidden");
+            };
+
+            reader.readAsDataURL(file);
+        });
+    </script>
 </body>
 
 </html>

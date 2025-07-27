@@ -43,6 +43,7 @@ final class Comment
             "users.profile_image",
             "users.url"
         ], [
+            "users.status" => "Active",
             "post_id" => $postId
         ]) ?? [];
     }
